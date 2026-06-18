@@ -1,0 +1,79 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "add_rule",
+      "description": "Add an exchange rule to the game economy. Call this when you observe a trade, crafting recipe, or conversion that should be recorded. Rules are content-addressed; storing the same rule twice is a no-op.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source_item": {
+            "type": "string",
+            "description": "The item being given or consumed (e.g. 'gold', 'wood', 'mana')."
+          },
+          "target_item": {
+            "type": "string",
+            "description": "The item received in exchange (e.g. 'silver', 'sword', 'potion')."
+          },
+          "source_qty": {
+            "type": "number",
+            "description": "Quantity of source_item required for the exchange."
+          },
+          "target_qty": {
+            "type": "number",
+            "description": "Quantity of target_item received from the exchange."
+          },
+          "rule_id": {
+            "type": "string",
+            "description": "Human-readable label for this rule (e.g. 'blacksmith-trade', 'merchant-buy'). Optional."
+          },
+          "db": {
+            "type": "string",
+            "description": "Path to the balancelab SQLite database. Defaults to .balancelab/economy.db."
+          }
+        },
+        "required": ["source_item", "target_item", "source_qty", "target_qty", "rule_id", "db"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "scan_economy",
+      "description": "Scan all stored exchange rules for arbitrage exploits using Bellman-Ford graph analysis. Returns an exploit report listing any circular trade paths that yield net gain (gain_ratio > 1.0). Call this after adding rules to detect balance issues.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "db": {
+            "type": "string",
+            "description": "Path to the balancelab SQLite database. Defaults to .balancelab/economy.db."
+          }
+        },
+        "required": ["db"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "list_reports",
+      "description": "List all previously generated exploit scan reports, ordered by most recent first. Each report includes exploit count and gain ratios. Use this to review scan history without re-running the analysis.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "db": {
+            "type": "string",
+            "description": "Path to the balancelab SQLite database. Defaults to .balancelab/economy.db."
+          }
+        },
+        "required": ["db"],
+        "additionalProperties": false
+      }
+    }
+  }
+]

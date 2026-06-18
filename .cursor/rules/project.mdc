@@ -1,0 +1,39 @@
+---
+description: balancelab coding rules and architecture context
+globs: ["src/**/*.py", "tests/**/*.py"]
+alwaysApply: true
+---
+
+# balancelab — Cursor Rules
+
+## What this project does
+Adversarial game economy red-team — detect arbitrage exploits in game economies via Bellman-Ford graph analysis.
+
+## Module map
+```
+src/balancelab/
+├── economy.py     # EconomyRule, EconomyGraph, ExploitPath, ExploitReport, ExploitFinder
+├── store.py       # EconomyStore — SQLite persistence
+├── report.py      # print_report(), to_json(), to_markdown()
+├── cli.py         # Click CLI: add, scan, report, log, status
+├── api.py         # FastAPI: /rule, /rules, /scan, /reports, /health
+└── mcp_server.py  # MCP server tools
+```
+
+## Invariants — never break these
+- `EconomyRule.id` = SHA-256[:16] of rule parameters — never change the hash formula
+- `ExploitFinder` negative cycle = exploit — must use Bellman-Ford on log-weight graph
+- `EconomyStore` uses INSERT OR REPLACE for upserts
+
+## Code style
+- Python 3.10+, fully type-annotated, mypy strict mode
+- Ruff lint rules: E F I N UP S B RUF
+- No print() in library code — use rich.console.Console
+- All public functions and classes must have docstrings
+- Tests: pytest, CliRunner for CLI tests
+
+## When adding a new feature
+1. Implement in the appropriate module
+2. Export from __init__.py, add to __all__ alphabetically
+3. Add tests in tests/test_<module>.py
+4. Update CHANGELOG.md under [Unreleased]

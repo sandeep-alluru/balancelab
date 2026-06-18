@@ -1,0 +1,16 @@
+name: balancelab
+description: "Adversarial game economy red-team — detect arbitrage exploits in game economies"
+inputs:
+  db:
+    description: "Path to the economy database"
+    required: false
+    default: ".balancelab/economy.db"
+runs:
+  using: "composite"
+  steps:
+    - name: Install balancelab
+      shell: bash
+      run: pip install -e "${{ github.action_path }}"
+    - name: Scan economy for exploits
+      shell: bash
+      run: balancelab scan --db ${{ inputs.db }}

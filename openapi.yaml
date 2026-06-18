@@ -1,0 +1,153 @@
+openapi: "3.1.0"
+info:
+  title: balancelab API
+  description: Adversarial game economy red-team — arbitrage exploit detection for game economies
+  version: "0.1.0"
+  contact:
+    name: Sandeep Alluru
+    email: onepuncchh@gmail.com
+  license:
+    name: MIT
+    url: https://github.com/sandeep-alluru/balancelab/blob/main/LICENSE
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  version:
+                    type: string
+                    example: "0.1.0"
+
+  /rule:
+    post:
+      operationId: addRule
+      summary: Add an exchange rule to the economy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [source_item, target_item, source_qty, target_qty]
+              properties:
+                source_item:
+                  type: string
+                  description: The item being exchanged
+                target_item:
+                  type: string
+                  description: The item received
+                source_qty:
+                  type: number
+                  description: Amount of source_item given
+                target_qty:
+                  type: number
+                  description: Amount of target_item received
+                rule_id:
+                  type: string
+                  description: Human-readable rule label
+                tags:
+                  type: array
+                  items:
+                    type: string
+                db:
+                  type: string
+                  description: Path to the economy database
+      responses:
+        "200":
+          description: Rule saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+
+  /rules:
+    get:
+      operationId: listRules
+      summary: List all exchange rules
+      parameters:
+        - in: query
+          name: db
+          schema:
+            type: string
+          description: Path to the economy database
+      responses:
+        "200":
+          description: List of rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /scan:
+    post:
+      operationId: scanEconomy
+      summary: Scan stored rules for arbitrage exploits
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                db:
+                  type: string
+                  description: Path to the economy database
+      responses:
+        "200":
+          description: Exploit report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  total_found:
+                    type: integer
+                  exploits:
+                    type: array
+                    items:
+                      type: object
+
+  /reports:
+    get:
+      operationId: listReports
+      summary: List all exploit reports
+      parameters:
+        - in: query
+          name: db
+          schema:
+            type: string
+          description: Path to the economy database
+      responses:
+        "200":
+          description: List of exploit reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
