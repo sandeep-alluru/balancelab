@@ -84,5 +84,5 @@ class TestEconomyStore:
 
     def test_db_created(self, tmp_path: Path) -> None:
         db_path = str(tmp_path / "subdir" / "test.db")
-        store = EconomyStore(db_path)
+        EconomyStore(db_path)
         assert Path(db_path).parent.exists()

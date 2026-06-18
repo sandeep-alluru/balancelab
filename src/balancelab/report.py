@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-from typing import Optional
 
 from rich.console import Console
 from rich.table import Table
@@ -10,7 +9,7 @@ from rich.table import Table
 from balancelab.economy import ExploitReport
 
 
-def print_report(report: ExploitReport, console: Optional[Console] = None) -> None:
+def print_report(report: ExploitReport, console: Console | None = None) -> None:
     """Print an ExploitReport to the console using rich."""
     if console is None:
         console = Console()

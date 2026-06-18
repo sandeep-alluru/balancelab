@@ -1,8 +1,6 @@
 """FastAPI server for balancelab."""
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -15,7 +13,7 @@ app = FastAPI(title="balancelab API", version=__version__)
 _DEFAULT_DB = ".balancelab/economy.db"
 
 
-def _store(db: Optional[str] = None) -> EconomyStore:
+def _store(db: str | None = None) -> EconomyStore:
     return EconomyStore(db or _DEFAULT_DB)
 
 
@@ -28,13 +26,13 @@ class RuleRequest(BaseModel):
     target_qty: float
     rule_id: str = ""
     tags: list[str] = []
-    db: Optional[str] = None
+    db: str | None = None
 
 
 class ScanRequest(BaseModel):
     """Request body for scanning economy."""
 
-    db: Optional[str] = None
+    db: str | None = None
 
 
 @app.get("/health")
@@ -60,7 +58,7 @@ def add_rule(req: RuleRequest) -> dict[str, str]:
 
 
 @app.get("/rules")
-def list_rules(db: Optional[str] = None) -> list[dict]:  # type: ignore[type-arg]
+def list_rules(db: str | None = None) -> list[dict]:  # type: ignore[type-arg]
     """List all exchange rules."""
     store = _store(db)
     return [r.to_dict() for r in store.list_rules()]
@@ -83,7 +81,7 @@ def scan_economy(req: ScanRequest) -> dict:  # type: ignore[type-arg]
 
 
 @app.get("/reports")
-def list_reports(db: Optional[str] = None) -> list[dict]:  # type: ignore[type-arg]
+def list_reports(db: str | None = None) -> list[dict]:  # type: ignore[type-arg]
     """List all exploit reports."""
     store = _store(db)
     return [r.to_dict() for r in store.list_reports()]

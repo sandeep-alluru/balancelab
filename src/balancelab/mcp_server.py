@@ -8,9 +8,9 @@ from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder
 from balancelab.store import EconomyStore
 
 try:
+    from mcp import types as mcp_types
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
-    from mcp import types as mcp_types
 
     _MCP_AVAILABLE = True
 except ImportError:

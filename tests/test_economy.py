@@ -1,9 +1,7 @@
 """Tests for EconomyRule, EconomyGraph content-addressing."""
 from __future__ import annotations
 
-import pytest
-
-from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder, ExploitPath, ExploitReport
+from balancelab.economy import EconomyGraph, EconomyRule, ExploitPath, ExploitReport
 
 
 class TestEconomyRule:

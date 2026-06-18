@@ -4,10 +4,9 @@ from __future__ import annotations
 import io
 import json
 
-import pytest
 from rich.console import Console
 
-from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder, ExploitPath, ExploitReport
+from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder, ExploitReport
 from balancelab.report import print_report, to_json, to_markdown
 
 

@@ -41,7 +41,7 @@ class EconomyRule:
         }
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "EconomyRule":
+    def from_dict(cls, d: dict[str, Any]) -> EconomyRule:
         """Deserialize from dict."""
         r = cls(
             source_item=d["source_item"],
@@ -180,7 +180,7 @@ class ExploitFinder:
                         pred_rule[v] = rule
 
             # Check for negative cycles
-            for u, v, w, rule in edges:
+            for u, v, w, _rule in edges:
                 if dist[u] != float("inf") and dist[u] + w < dist[v]:
                     # Found negative cycle - trace it back
                     cycle_nodes: list[str] = []

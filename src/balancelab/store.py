@@ -4,7 +4,6 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
-from typing import Optional
 
 from balancelab.economy import EconomyRule, ExploitPath, ExploitReport
 
@@ -71,7 +70,7 @@ class EconomyStore:
                 ),
             )
 
-    def get_rule(self, rule_id: str) -> Optional[EconomyRule]:
+    def get_rule(self, rule_id: str) -> EconomyRule | None:
         """Retrieve a rule by ID."""
         with self._conn() as conn:
             row = conn.execute(
@@ -123,7 +122,7 @@ class EconomyStore:
                 ),
             )
 
-    def get_report(self, report_id: str) -> Optional[ExploitReport]:
+    def get_report(self, report_id: str) -> ExploitReport | None:
         """Retrieve a report by ID."""
         with self._conn() as conn:
             row = conn.execute(
