@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import math
 import time
 from dataclasses import dataclass, field
@@ -93,7 +94,10 @@ class ExploitPath:
     id: str = field(init=False)
 
     def __post_init__(self) -> None:
-        payload = "|".join(self.path) + "|".join(self.rules_used)
+        payload = json.dumps(
+            {"path": self.path, "rules": self.rules_used, "gain_ratio": round(self.gain_ratio, 10)},
+            sort_keys=True,
+        )
         self.id = hashlib.sha256(payload.encode()).hexdigest()[:16]
 
     def to_dict(self) -> dict[str, Any]:
@@ -118,7 +122,11 @@ class ExploitReport:
     id: str = field(init=False)
 
     def __post_init__(self) -> None:
-        payload = f"{self.graph_item_count}|{self.graph_rule_count}|{self.total_found}"
+        exploit_ids = "|".join(sorted(e.id for e in self.exploits))
+        payload = (
+            f"{self.graph_item_count}|{self.graph_rule_count}"
+            f"|{self.total_found}|{exploit_ids}"
+        )
         self.id = hashlib.sha256(payload.encode()).hexdigest()[:16]
 
     def to_dict(self) -> dict[str, Any]:

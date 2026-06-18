@@ -52,3 +52,30 @@ jobs:
         with:
           files: coverage.xml
           fail_ci_if_error: false
+
+  exploit-scan-gate:
+    name: Exploit Scan Gate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-3.11-${{ hashFiles('pyproject.toml') }}
+      - name: Install balancelab
+        run: pip install -e .
+      - name: List exploit reports (if DB exists)
+        run: |
+          if [ -f .balancelab/economy.db ]; then
+            balancelab log
+            balancelab status
+          else
+            echo "No economy DB — skipping exploit scan gate."
+          fi
+        continue-on-error: true
