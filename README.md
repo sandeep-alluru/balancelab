@@ -227,6 +227,13 @@ Suggested topics for discoverability: `#game-economy` `#arbitrage` `#balance-tes
 
 ---
 
+## Case Studies
+
+See how teams are using balancelab in production:
+
+- [Eliminating Economy Exploits Before Launch](docs/case-studies/gaming-economy-pre-launch.md) — Stellar Forge finds 5 exploits (including a 1,250x gain ratio) before shipping to 2M DAU
+- [Catching Reward Hacking in an AI Agent Token Economy](docs/case-studies/ai-agent-reward-hacking.md) — Orbital Systems catches synthetic-task reward hacking in simulation before it reaches production
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sandeep-alluru/balancelab&type=Date)](https://star-history.com/#sandeep-alluru/balancelab&Date)
