@@ -43,10 +43,10 @@ def recommend_fixes(report: ExploitReport) -> list[BalanceFix]:
 
         elif gain_ratio > 2.0:
             fix_type = "rate_cap"
-            # suggested_value: target such that cycle gain becomes 1.0
-            # product of rates = 1.0, so cap the highest to make it neutral
-            # target = 1 / n_edges (each edge should have rate = 1.0^(1/n_edges))
-            suggested_value = 1.0 / n_edges
+            # suggested_value: cap each edge rate so the cycle gain becomes 1.0
+            # To neutralize: product of rates = 1.0
+            # If current gain_ratio = R, cap each edge to (1/R)^(1/n_edges)
+            suggested_value = (1.0 / max(gain_ratio, 1.001)) ** (1.0 / n_edges)
             description = (
                 f"Cap exchange rate on edge ({path[0]} -> {path[1]}) "
                 f"to {suggested_value:.4f} so the cycle gain reduces to 1.0."

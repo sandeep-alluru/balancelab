@@ -114,12 +114,14 @@ def test_recommend_fixes_no_target_edge_single_node() -> None:
 
 
 def test_recommend_fixes_rate_cap_value() -> None:
-    """rate_cap fix suggested_value is 1.0 / n_edges."""
+    """rate_cap fix suggested_value is the geometric neutralization cap per edge."""
     # 3-node path: A->B->C->A => 3 edges (3 pairs in the path nodes A,B,C,A)
     exploit = _make_exploit(["A", "B", "C", "A"], gain_ratio=3.0)
     report = _make_report([exploit])
     fixes = recommend_fixes(report)
 
     assert fixes[0].fix_type == "rate_cap"
-    # n_edges = len(path) - 1 = 3
-    assert fixes[0].suggested_value == pytest.approx(1.0 / 3)
+    # n_edges = len(path) - 1 = 3, gain_ratio = 3.0
+    # suggested_value = (1 / gain_ratio) ^ (1 / n_edges) = (1/3)^(1/3)
+    expected = (1.0 / max(3.0, 1.001)) ** (1.0 / 3)
+    assert fixes[0].suggested_value == pytest.approx(expected)

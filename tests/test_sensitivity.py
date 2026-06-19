@@ -1,8 +1,6 @@
 """Tests for balancelab.sensitivity."""
 from __future__ import annotations
 
-import pytest
-
 from balancelab.economy import EconomyGraph, EconomyRule, ExploitPath, ExploitReport
 from balancelab.sensitivity import SensitivityResult, critical_path, sensitivity_analysis
 

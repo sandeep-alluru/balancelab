@@ -118,17 +118,8 @@ def simulate(
                         activity_key = f"{rule.source_item}->{rule.target_item}"
                         activity_counts[activity_key] = activity_counts.get(activity_key, 0) + 1
 
-            # Also apply greedy rules for normal activity
-            for rule in graph.rules:
-                if resource_levels.get(rule.source_item, 0.0) >= rule.source_qty:
-                    resource_levels[rule.source_item] = (
-                        resource_levels.get(rule.source_item, 0.0) - rule.source_qty
-                    )
-                    resource_levels[rule.target_item] = (
-                        resource_levels.get(rule.target_item, 0.0) + rule.target_qty
-                    )
-                    activity_key = f"{rule.source_item}->{rule.target_item}"
-                    activity_counts[activity_key] = activity_counts.get(activity_key, 0) + 1
+            # Skip greedy pass — exploit cycles were already applied
+            # (applying greedy rules again would double-count rules used in exploit cycles)
 
         # Check for inflation: any resource > 10x its initial level
         if not inflation_detected:

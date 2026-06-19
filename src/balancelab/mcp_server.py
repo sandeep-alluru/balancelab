@@ -8,13 +8,13 @@ from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder
 from balancelab.store import EconomyStore
 
 try:
-    from mcp import types as mcp_types
-    from mcp.server import Server
-    from mcp.server.stdio import stdio_server
+    import mcp.server.stdio as _mcp_stdio
+    import mcp.types as _mcp_types
+    from mcp.server import Server as _Server
 
-    _MCP_AVAILABLE = True
+    _HAS_MCP = True
 except ImportError:
-    _MCP_AVAILABLE = False
+    _HAS_MCP = False
 
 
 def _get_store(db: str = ".balancelab/economy.db") -> EconomyStore:
@@ -65,18 +65,18 @@ def list_reports(db: str = ".balancelab/economy.db") -> list[dict[str, Any]]:
 
 def run_server() -> None:
     """Run the MCP server."""
-    if not _MCP_AVAILABLE:
+    if not _HAS_MCP:
         msg = "mcp package not installed. Run: pip install balancelab[mcp]"
         raise RuntimeError(msg)
 
     import asyncio
 
-    server = Server("balancelab")
+    server = _Server("balancelab")
 
     @server.list_tools()  # type: ignore[misc]
-    async def handle_list_tools() -> list[mcp_types.Tool]:
+    async def handle_list_tools() -> list[_mcp_types.Tool]:
         return [
-            mcp_types.Tool(
+            _mcp_types.Tool(
                 name="add_rule",
                 description="Add an exchange rule to the game economy",
                 inputSchema={
@@ -92,7 +92,7 @@ def run_server() -> None:
                     "required": ["source_item", "target_item", "source_qty", "target_qty"],
                 },
             ),
-            mcp_types.Tool(
+            _mcp_types.Tool(
                 name="scan_economy",
                 description="Scan the economy for arbitrage exploits",
                 inputSchema={
@@ -100,7 +100,7 @@ def run_server() -> None:
                     "properties": {"db": {"type": "string"}},
                 },
             ),
-            mcp_types.Tool(
+            _mcp_types.Tool(
                 name="list_reports",
                 description="List all exploit scan reports",
                 inputSchema={
@@ -113,20 +113,21 @@ def run_server() -> None:
     @server.call_tool()  # type: ignore[misc]
     async def handle_call_tool(
         name: str, arguments: dict[str, Any]
-    ) -> list[mcp_types.TextContent]:
+    ) -> list[_mcp_types.TextContent]:
+        tool_result: dict[str, Any] | list[dict[str, Any]]
         if name == "add_rule":
-            result = add_rule(**arguments)
+            tool_result = add_rule(**arguments)
         elif name == "scan_economy":
-            result = scan_economy(**arguments)
+            tool_result = scan_economy(**arguments)
         elif name == "list_reports":
-            result = list_reports(**arguments)
+            tool_result = list_reports(**arguments)
         else:
             msg = f"Unknown tool: {name}"
             raise ValueError(msg)
-        return [mcp_types.TextContent(type="text", text=json.dumps(result, indent=2))]
+        return [_mcp_types.TextContent(type="text", text=json.dumps(tool_result, indent=2))]
 
     async def main() -> None:
-        async with stdio_server() as (read_stream, write_stream):
+        async with _mcp_stdio.stdio_server() as (read_stream, write_stream):
             await server.run(read_stream, write_stream, server.create_initialization_options())
 
     asyncio.run(main())

@@ -176,7 +176,7 @@ class ExploitFinder:
         # Try Bellman-Ford from each source to find negative cycles
         for start in range(n):
             dist = [float("inf")] * n
-            pred: list[int] = [-1] * n
+            pred: list[int | None] = [None] * n
             pred_rule: list[EconomyRule | None] = [None] * n
             dist[start] = 0.0
 
@@ -197,8 +197,12 @@ class ExploitFinder:
                     curr = v
                     # advance enough steps to ensure we're in the cycle
                     for _ in range(n):
-                        curr = pred[curr]
+                        curr = pred[curr]  # type: ignore[assignment]
+                        if curr is None:
+                            break
                     # now trace the cycle
+                    if curr is None:
+                        break
                     cycle_start = curr
                     curr = cycle_start
                     while True:
@@ -206,8 +210,8 @@ class ExploitFinder:
                         cycle_nodes.append(items[curr])
                         if pred_rule[curr] is not None:
                             cycle_rules.append(pred_rule[curr].id)  # type: ignore[union-attr]
-                        curr = pred[curr]
-                        if curr == cycle_start:
+                        curr = pred[curr]  # type: ignore[assignment]
+                        if curr is None or curr == cycle_start:
                             break
 
                     # close the cycle
