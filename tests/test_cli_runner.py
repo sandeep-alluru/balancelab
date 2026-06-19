@@ -41,9 +41,16 @@ class TestCLI:
         assert "No rules" in result.output
 
     def test_scan_with_exploit(self, runner: CliRunner, db_path: str) -> None:
+        """scan exits with code 1 when exploits are found (CI feature)."""
         runner.invoke(main, ["add", "gold", "silver", "1.0", "3.0", "--db", db_path])
         runner.invoke(main, ["add", "silver", "gems", "1.0", "2.0", "--db", db_path])
         runner.invoke(main, ["add", "gems", "gold", "1.0", "4.0", "--db", db_path])
+        result = runner.invoke(main, ["scan", "--db", db_path])
+        assert result.exit_code == 1
+
+    def test_scan_no_exploit_exits_zero(self, runner: CliRunner, db_path: str) -> None:
+        """scan exits 0 when no exploits are found."""
+        runner.invoke(main, ["add", "gold", "silver", "1.0", "0.5", "--db", db_path])
         result = runner.invoke(main, ["scan", "--db", db_path])
         assert result.exit_code == 0
 
@@ -52,7 +59,8 @@ class TestCLI:
         runner.invoke(main, ["add", "silver", "gems", "1.0", "2.0", "--db", db_path])
         runner.invoke(main, ["add", "gems", "gold", "1.0", "4.0", "--db", db_path])
         result = runner.invoke(main, ["scan", "--format", "json", "--db", db_path])
-        assert result.exit_code == 0
+        # scan exits 1 when exploits found, even with json format
+        assert result.exit_code == 1
         data = json.loads(result.output)
         assert "total_found" in data
 

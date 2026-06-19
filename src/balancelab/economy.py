@@ -217,6 +217,11 @@ class ExploitFinder:
                     # close the cycle
                     cycle_nodes.append(items[cycle_start])
 
+                    # Reverse: path was built following predecessor links (backwards),
+                    # so reverse to get actual rule-flow direction (e.g. gold→silver→gems→gold).
+                    cycle_nodes = cycle_nodes[::-1]
+                    cycle_rules = cycle_rules[::-1]
+
                     # Compute gain ratio - multiply exchange rates around the cycle
                     gain = 1.0
                     for node_idx in visited:

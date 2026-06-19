@@ -39,8 +39,13 @@ def to_json(report: ExploitReport) -> str:
     return json.dumps(report.to_dict(), indent=2)
 
 
-def to_markdown(reports: list[ExploitReport]) -> str:
-    """Format a list of ExploitReports as a Markdown table."""
+def to_markdown(reports: ExploitReport | list[ExploitReport]) -> str:
+    """Format one or more ExploitReports as a Markdown table.
+
+    Accepts either a single ExploitReport or a list of ExploitReport objects.
+    """
+    if isinstance(reports, ExploitReport):
+        reports = [reports]
     lines = ["# balancelab Exploit Reports", ""]
     lines.append("| Report ID | Items | Rules | Exploits | Top Gain |")
     lines.append("|-----------|-------|-------|----------|----------|")

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json as _json
+import sys
 
 import click
 from rich.console import Console
@@ -72,6 +73,9 @@ def scan(db: str, fmt: str) -> None:
         click.echo(to_json(report))
     else:
         print_report(report, console=console)
+
+    if report.total_found > 0:
+        sys.exit(1)
 
 
 @main.command("report")

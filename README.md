@@ -95,11 +95,11 @@ print_report(report)
 # Exploit Report (id: a3f8b2c1d4e5f6a7)
 #   Items: 3  Rules: 3
 #   Exploits found: 1
-# ┌──────────────────┬─────────────────────────────────┬────────────┐
-# │ ID               │ Path                            │ Gain Ratio │
-# ├──────────────────┼─────────────────────────────────┼────────────┤
-# │ 4d7e9c2a1b8f3e6a │ gold → silver → gems → gold     │ 24.00x     │
-# └──────────────────┴─────────────────────────────────┴────────────┘
+# ┌──────────────────┬─────────────────────────────────────────┬────────────┐
+# │ ID               │ Path                                    │ Gain Ratio │
+# ├──────────────────┼─────────────────────────────────────────┼────────────┤
+# │ 4d7e9c2a1b8f3e6a │ gold → silver → gems → gold             │ 24.00x     │
+# └──────────────────┴─────────────────────────────────────────┴────────────┘
 ```
 
 ---
@@ -117,6 +117,8 @@ balancelab [--db PATH] COMMAND [OPTIONS]
 | `report REPORT_ID` | Show a specific exploit report | `--format {rich,json}`, `--db PATH` |
 | `log` | List all exploit reports | `--db PATH` |
 | `status` | Show rule count and last scan | `--db PATH` |
+| `simulate GRAPH_FILE` | Simulate economy from a JSON graph file | `--steps N`, `--strategy {greedy,balanced,exploit}`, `--format {rich,json}` |
+| `fixes` | Show fix recommendations for the latest exploit report | `--report-id ID`, `--db PATH` |
 
 **Global options:**
 
@@ -166,6 +168,29 @@ You can also find balancelab on [Smithery](https://smithery.ai/) for one-click M
 
 ---
 
+## REST Server
+
+balancelab ships a FastAPI server exposing all core operations over HTTP.
+
+```bash
+pip install "balancelab[api]"
+uvicorn balancelab.api:app --reload
+```
+
+Available endpoints:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/rule` | Add an exchange rule |
+| `GET` | `/rules` | List all rules |
+| `POST` | `/scan` | Run exploit scan |
+| `GET` | `/reports` | List all reports |
+| `GET` | `/health` | Health check |
+
+The full OpenAPI spec is in [`openapi.yaml`](openapi.yaml).
+
+---
+
 ## OpenAI
 
 Use `tools/openai-tools.json` for OpenAI function calling:
@@ -178,6 +203,77 @@ response = openai.chat.completions.create(
     tools=tools,
     messages=[{"role": "user", "content": "Scan my economy for exploits"}],
 )
+```
+
+---
+
+## Advanced API
+
+Beyond the core exploit detection primitives, balancelab exposes several higher-level APIs imported directly from the package:
+
+```python
+from balancelab import (
+    simulate,
+    recommend_fixes,
+    sensitivity_analysis,
+    critical_path,
+    BalanceFix,
+    SensitivityResult,
+    SimulationResult,
+)
+```
+
+### `simulate(graph, initial_levels, n_steps=100, agent_strategy="greedy") -> SimulationResult`
+
+Run a forward simulation of the economy. Strategies: `"greedy"` (apply every rule each step), `"balanced"` (one rule per source item), `"exploit"` (agent actively exploits known cycles).
+
+```python
+from balancelab import simulate
+from balancelab.economy import EconomyGraph, EconomyRule
+
+graph = EconomyGraph()
+graph.add_rule(EconomyRule("gold", "silver", 1.0, 3.0))
+result = simulate(graph, {"gold": 100.0, "silver": 0.0}, n_steps=50, agent_strategy="exploit")
+print(result.inflation_detected)   # True/False
+print(result.final_levels)         # {"gold": ..., "silver": ...}
+```
+
+**`SimulationResult`** fields: `steps`, `final_levels`, `violated_rules`, `inflation_detected`, `inflation_resource`, `summary`.
+
+### `recommend_fixes(report) -> list[BalanceFix]`
+
+For each exploit in an `ExploitReport`, suggest the minimum intervention to neutralize it.
+
+```python
+from balancelab import recommend_fixes
+fixes = recommend_fixes(report)
+for fix in fixes:
+    print(fix.fix_type, fix.target_edge, fix.suggested_value, fix.description)
+```
+
+**`BalanceFix`** fields: `exploit_path`, `fix_type` (`"rate_cap"`, `"cooldown"`, `"daily_limit"`, `"require_prerequisite"`), `target_edge`, `suggested_value`, `description`, `estimated_reduction_pct`.
+
+### `sensitivity_analysis(graph, report) -> list[SensitivityResult]`
+
+Rank all economy nodes by how much they affect overall balance, descending by `impact_score`.
+
+```python
+from balancelab import sensitivity_analysis
+results = sensitivity_analysis(graph, report)
+for r in results:
+    print(r.node_id, r.impact_score, r.recommendation)
+```
+
+**`SensitivityResult`** fields: `node_id`, `node_type` (`"hub"`, `"source_only"`, `"target_only"`), `impact_score` (0–1), `connected_rules`, `exploit_involvement`, `recommendation` (`"monitor"`, `"rate-limit"`, `"gate"`).
+
+### `critical_path(graph) -> list[str]`
+
+Find the sequence of nodes with the highest economic throughput (most exchange-rate flow). Useful for identifying which items act as economic bottlenecks.
+
+```python
+from balancelab import critical_path
+path = critical_path(graph)
+print(" -> ".join(path))   # e.g. "gems -> gold -> silver"
 ```
 
 ---
