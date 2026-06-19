@@ -15,4 +15,4 @@ startCommand:
     type: object
     properties: {}
   commandFunction: |-
-    (config) => ({ command: "python", args: ["-m", "balancelab.mcp_server"] })
+    (config) => ({ command: "balancelab-mcp" })
