@@ -1,4 +1,5 @@
 """Sensitivity analysis for economy nodes."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,11 +10,11 @@ from balancelab.economy import EconomyGraph, ExploitReport
 @dataclass
 class SensitivityResult:
     node_id: str
-    node_type: str         # "source_only", "target_only", "hub" (appears as both)
-    impact_score: float    # 0-1, how much changing this node affects the economy
-    connected_rules: int   # how many rules reference this node
+    node_type: str  # "source_only", "target_only", "hub" (appears as both)
+    impact_score: float  # 0-1, how much changing this node affects the economy
+    connected_rules: int  # how many rules reference this node
     exploit_involvement: int  # how many exploit paths pass through this node
-    recommendation: str    # "monitor", "rate-limit", "gate"
+    recommendation: str  # "monitor", "rate-limit", "gate"
 
 
 def sensitivity_analysis(graph: EconomyGraph, report: ExploitReport) -> list[SensitivityResult]:
@@ -36,9 +37,7 @@ def sensitivity_analysis(graph: EconomyGraph, report: ExploitReport) -> list[Sen
             node_type = "target_only"
 
         # Count exploit involvement
-        exploit_involvement = sum(
-            1 for exploit in report.exploits if node in exploit.path
-        )
+        exploit_involvement = sum(1 for exploit in report.exploits if node in exploit.path)
 
         # Compute impact_score
         impact_score = min(
@@ -54,14 +53,16 @@ def sensitivity_analysis(graph: EconomyGraph, report: ExploitReport) -> list[Sen
         else:
             recommendation = "monitor"
 
-        results.append(SensitivityResult(
-            node_id=node,
-            node_type=node_type,
-            impact_score=impact_score,
-            connected_rules=connected_rules,
-            exploit_involvement=exploit_involvement,
-            recommendation=recommendation,
-        ))
+        results.append(
+            SensitivityResult(
+                node_id=node,
+                node_type=node_type,
+                impact_score=impact_score,
+                connected_rules=connected_rules,
+                exploit_involvement=exploit_involvement,
+                recommendation=recommendation,
+            )
+        )
 
     # Sort by impact_score descending
     results.sort(key=lambda r: r.impact_score, reverse=True)
@@ -76,9 +77,7 @@ def critical_path(graph: EconomyGraph) -> list[str]:
     # Build outgoing throughput per node: sum of exchange_rates for all rules where node is source
     throughput: dict[str, float] = {}
     for node in graph.items():
-        throughput[node] = sum(
-            r.exchange_rate() for r in graph.rules if r.source_item == node
-        )
+        throughput[node] = sum(r.exchange_rate() for r in graph.rules if r.source_item == node)
 
     # Start from the node with highest outgoing throughput
     if not throughput:

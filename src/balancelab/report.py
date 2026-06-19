@@ -1,4 +1,5 @@
 """Report formatters for ExploitReport."""
+
 from __future__ import annotations
 
 import json

@@ -1,4 +1,5 @@
 """balancelab — adversarial game economy red-team library."""
+
 from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError, version

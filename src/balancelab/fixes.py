@@ -1,4 +1,5 @@
 """Fix recommendations for economy exploits."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -8,13 +9,13 @@ from balancelab.economy import ExploitReport
 
 @dataclass
 class BalanceFix:
-    exploit_path: list[str]             # the node IDs in the exploit path
+    exploit_path: list[str]  # the node IDs in the exploit path
     # "rate_cap", "cooldown", "daily_limit", "require_prerequisite"
     fix_type: str
     target_edge: tuple[str, str] | None
     suggested_value: float | None
     description: str
-    estimated_reduction_pct: float      # how much this fix reduces the exploit rate (0-100)
+    estimated_reduction_pct: float  # how much this fix reduces the exploit rate (0-100)
 
 
 def recommend_fixes(report: ExploitReport) -> list[BalanceFix]:
@@ -71,13 +72,15 @@ def recommend_fixes(report: ExploitReport) -> list[BalanceFix]:
             )
             estimated_reduction_pct = 60.0
 
-        fixes.append(BalanceFix(
-            exploit_path=list(path),
-            fix_type=fix_type,
-            target_edge=target_edge,
-            suggested_value=suggested_value,
-            description=description,
-            estimated_reduction_pct=estimated_reduction_pct,
-        ))
+        fixes.append(
+            BalanceFix(
+                exploit_path=list(path),
+                fix_type=fix_type,
+                target_edge=target_edge,
+                suggested_value=suggested_value,
+                description=description,
+                estimated_reduction_pct=estimated_reduction_pct,
+            )
+        )
 
     return fixes

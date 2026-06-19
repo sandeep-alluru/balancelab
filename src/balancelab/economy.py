@@ -1,4 +1,5 @@
 """Core data model for balancelab — economy rules, graphs, exploits."""
+
 from __future__ import annotations
 
 import hashlib
@@ -124,8 +125,7 @@ class ExploitReport:
     def __post_init__(self) -> None:
         exploit_ids = "|".join(sorted(e.id for e in self.exploits))
         payload = (
-            f"{self.graph_item_count}|{self.graph_rule_count}"
-            f"|{self.total_found}|{exploit_ids}"
+            f"{self.graph_item_count}|{self.graph_rule_count}|{self.total_found}|{exploit_ids}"
         )
         self.id = hashlib.sha256(payload.encode()).hexdigest()[:16]
 

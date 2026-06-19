@@ -1,4 +1,5 @@
 """MCP server for balancelab."""
+
 from __future__ import annotations
 
 import json
@@ -73,7 +74,7 @@ def run_server() -> None:
 
     server = _Server("balancelab")
 
-    @server.list_tools()  # type: ignore[misc]
+    @server.list_tools()
     async def handle_list_tools() -> list[_mcp_types.Tool]:
         return [
             _mcp_types.Tool(
@@ -110,7 +111,7 @@ def run_server() -> None:
             ),
         ]
 
-    @server.call_tool()  # type: ignore[misc]
+    @server.call_tool()
     async def handle_call_tool(
         name: str, arguments: dict[str, Any]
     ) -> list[_mcp_types.TextContent]:

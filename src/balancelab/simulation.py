@@ -1,4 +1,5 @@
 """Economy simulation: run the economy forward N time steps."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,16 +10,16 @@ from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder
 @dataclass
 class SimulationStep:
     step: int
-    resource_levels: dict[str, float]   # resource_name -> current_level
-    activity_counts: dict[str, int]     # activity -> times performed this step
-    rule_violations: list[str]          # which rules were violated (rule IDs)
+    resource_levels: dict[str, float]  # resource_name -> current_level
+    activity_counts: dict[str, int]  # activity -> times performed this step
+    rule_violations: list[str]  # which rules were violated (rule IDs)
 
 
 @dataclass
 class SimulationResult:
     steps: list[SimulationStep]
     final_levels: dict[str, float]
-    violated_rules: list[str]           # all rules violated during simulation (deduplicated)
+    violated_rules: list[str]  # all rules violated during simulation (deduplicated)
     inflation_detected: bool
     inflation_resource: str | None
     summary: str
@@ -133,22 +134,20 @@ def simulate(
         # Track all violations
         all_violated.update(rule_violations)
 
-        steps.append(SimulationStep(
-            step=step_num,
-            resource_levels=dict(resource_levels),
-            activity_counts=dict(activity_counts),
-            rule_violations=list(rule_violations),
-        ))
+        steps.append(
+            SimulationStep(
+                step=step_num,
+                resource_levels=dict(resource_levels),
+                activity_counts=dict(activity_counts),
+                rule_violations=list(rule_violations),
+            )
+        )
 
     final_levels = dict(resource_levels)
     violated_rules = sorted(all_violated)
 
     inflation_str = "yes" if inflation_detected else "no"
-    summary = (
-        f"Ran {n_steps} steps. "
-        f"Final levels: {final_levels}. "
-        f"Inflation: {inflation_str}."
-    )
+    summary = f"Ran {n_steps} steps. Final levels: {final_levels}. Inflation: {inflation_str}."
 
     return SimulationResult(
         steps=steps,

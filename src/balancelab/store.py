@@ -1,4 +1,5 @@
 """SQLite store for EconomyRules and ExploitReports."""
+
 from __future__ import annotations
 
 import json
@@ -73,9 +74,7 @@ class EconomyStore:
     def get_rule(self, rule_id: str) -> EconomyRule | None:
         """Retrieve a rule by ID."""
         with self._conn() as conn:
-            row = conn.execute(
-                "SELECT * FROM economy_rules WHERE id = ?", (rule_id,)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM economy_rules WHERE id = ?", (rule_id,)).fetchone()
             if row is None:
                 return None
             return EconomyRule(
@@ -151,9 +150,7 @@ class EconomyStore:
     def list_reports(self) -> list[ExploitReport]:
         """List all stored reports (metadata only, no exploit details)."""
         with self._conn() as conn:
-            rows = conn.execute(
-                "SELECT * FROM exploit_reports ORDER BY timestamp DESC"
-            ).fetchall()
+            rows = conn.execute("SELECT * FROM exploit_reports ORDER BY timestamp DESC").fetchall()
             result = []
             for row in rows:
                 exploits_data = json.loads(row["exploits"])

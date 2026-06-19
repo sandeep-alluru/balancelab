@@ -1,4 +1,5 @@
 """CLI for balancelab."""
+
 from __future__ import annotations
 
 import json as _json
@@ -173,8 +174,7 @@ def simulate_cmd(graph_file: str, steps: int, strategy: str, fmt: str) -> None:
             extras = len(result.violated_rules) - 5
             suffix = f" (+{extras} more)" if extras > 0 else ""
             console.print(
-                f"[yellow]Rule violations:[/yellow] "
-                f"{', '.join(result.violated_rules[:5])}{suffix}"
+                f"[yellow]Rule violations:[/yellow] {', '.join(result.violated_rules[:5])}{suffix}"
             )
 
 
@@ -193,9 +193,7 @@ def fixes_cmd(db: str, report_id: str) -> None:
     else:
         reports = store.list_reports()
         if not reports:
-            console.print(
-                "[yellow]No reports found. Run 'balancelab scan' first.[/yellow]"
-            )
+            console.print("[yellow]No reports found. Run 'balancelab scan' first.[/yellow]")
             return
         report = reports[0]
 
@@ -206,9 +204,7 @@ def fixes_cmd(db: str, report_id: str) -> None:
         return
 
     n_fixes = len(fixes)
-    console.print(
-        f"[bold]Fix recommendations for report {report.id}[/bold] ({n_fixes} fix(es))\n"
-    )
+    console.print(f"[bold]Fix recommendations for report {report.id}[/bold] ({n_fixes} fix(es))\n")
     for i, fix in enumerate(fixes, 1):
         console.print(f"[bold cyan]Fix {i}:[/bold cyan] {fix.fix_type.upper()}")
         console.print(f"  Path: {' -> '.join(fix.exploit_path)}")
