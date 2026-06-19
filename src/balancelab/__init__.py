@@ -15,12 +15,23 @@ from balancelab.economy import (
     ExploitPath,
     ExploitReport,
 )
+from balancelab.fixes import BalanceFix, recommend_fixes
+from balancelab.sensitivity import SensitivityResult, critical_path, sensitivity_analysis
+from balancelab.simulation import SimulationResult, SimulationStep, simulate
 
 __all__ = [
+    "BalanceFix",
     "EconomyGraph",
     "EconomyRule",
     "ExploitFinder",
     "ExploitPath",
     "ExploitReport",
+    "SensitivityResult",
+    "SimulationResult",
+    "SimulationStep",
     "__version__",
+    "critical_path",
+    "recommend_fixes",
+    "sensitivity_analysis",
+    "simulate",
 ]

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `simulate()` — run economy forward N steps with greedy/balanced/exploit strategies
+- `SimulationStep` and `SimulationResult` dataclasses for step-by-step economy tracking
+- `recommend_fixes()` — generate minimum fix recommendations for each exploit (rate_cap, cooldown, daily_limit, require_prerequisite)
+- `BalanceFix` dataclass with estimated_reduction_pct
+- `sensitivity_analysis()` — rank all economy nodes by impact score
+- `critical_path()` — find highest-throughput node sequence
+- `SensitivityResult` dataclass with recommendation field
+- CLI: `balancelab simulate <graph_file>` and `balancelab fixes` commands
+
 ## [0.1.0] - 2026-06-18
 
 ### Added
