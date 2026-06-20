@@ -330,6 +330,12 @@ See how teams are using balancelab in production:
 - [Eliminating Economy Exploits Before Launch](docs/case-studies/gaming-economy-pre-launch.md) — Stellar Forge finds 5 exploits (including a 1,250x gain ratio) before shipping to 2M DAU
 - [Catching Reward Hacking in an AI Agent Token Economy](docs/case-studies/ai-agent-reward-hacking.md) — Orbital Systems catches synthetic-task reward hacking in simulation before it reaches production
 
+---
+
+## Stay Updated
+
+Subscribe to [**The Silence Layer**](https://newsletter.salluru.dev) — weekly dispatches on production AI infrastructure, new releases, and the failure modes that production AI systems don't surface until it's too late.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sandeep-alluru/balancelab&type=Date)](https://star-history.com/#sandeep-alluru/balancelab&Date)
