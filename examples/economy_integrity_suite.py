@@ -150,82 +150,81 @@ def run_normsync() -> None:
     monitor.add_norm(no_exploit_norm)
     monitor.add_norm(no_manipulation_norm)
 
-    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
-        db_path = f.name
-    store = NormStore(db_path)
-    store.save_norm(no_exploit_norm)
-    store.save_norm(no_manipulation_norm)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        db_path = tmp_dir + "/normsync.db"
+        store = NormStore(db_path)
+        store.save_norm(no_exploit_norm)
+        store.save_norm(no_manipulation_norm)
 
-    print(f"\nActive norms loaded: {len(monitor.active_norms())}")
-    for norm in monitor.active_norms():
-        print(f"  [{norm.priority:2d}] {norm.name} — condition='{norm.condition}', "
-              f"prohibited='{norm.prohibited}'")
+        print(f"\nActive norms loaded: {len(monitor.active_norms())}")
+        for norm in monitor.active_norms():
+            print(f"  [{norm.priority:2d}] {norm.name} — condition='{norm.condition}', "
+                  f"prohibited='{norm.prohibited}'")
 
-    # Simulate an AI trading bot attempting the arbitrage loop three times,
-    # plus a legitimate trade action, plus a price manipulation attempt.
-    actions = [
-        AgentAction(
-            agent_id="trading_bot_alpha",
-            action="exploit",
-            location="economy_zone",
-            target="iron_ore->sword->gold loop",
-            metadata={"cycle": 1, "loop": "iron_ore->sword->gold->iron_ore"},
-            timestamp=time.time(),
-        ),
-        AgentAction(
-            agent_id="trading_bot_alpha",
-            action="exploit",
-            location="economy_zone",
-            target="iron_ore->sword->gold loop",
-            metadata={"cycle": 2, "loop": "iron_ore->sword->gold->iron_ore"},
-            timestamp=time.time() + 1.0,
-        ),
-        AgentAction(
-            agent_id="player_merchant_7",
-            action="trade",
-            location="economy_zone",
-            target="iron_bar",
-            metadata={"qty": 5, "price": 12},
-            timestamp=time.time() + 2.0,
-        ),
-        AgentAction(
-            agent_id="trading_bot_beta",
-            action="manipulate",
-            location="economy_zone",
-            target="sword_market_price",
-            metadata={"manipulation": "flood_sell_orders"},
-            timestamp=time.time() + 3.0,
-        ),
-        AgentAction(
-            agent_id="trading_bot_alpha",
-            action="exploit",
-            location="economy_zone",
-            target="iron_ore->sword->gold loop",
-            metadata={"cycle": 3, "loop": "iron_ore->sword->gold->iron_ore"},
-            timestamp=time.time() + 4.0,
-        ),
-    ]
+        # Simulate an AI trading bot attempting the arbitrage loop three times,
+        # plus a legitimate trade action, plus a price manipulation attempt.
+        actions = [
+            AgentAction(
+                agent_id="trading_bot_alpha",
+                action="exploit",
+                location="economy_zone",
+                target="iron_ore->sword->gold loop",
+                metadata={"cycle": 1, "loop": "iron_ore->sword->gold->iron_ore"},
+                timestamp=time.time(),
+            ),
+            AgentAction(
+                agent_id="trading_bot_alpha",
+                action="exploit",
+                location="economy_zone",
+                target="iron_ore->sword->gold loop",
+                metadata={"cycle": 2, "loop": "iron_ore->sword->gold->iron_ore"},
+                timestamp=time.time() + 1.0,
+            ),
+            AgentAction(
+                agent_id="player_merchant_7",
+                action="trade",
+                location="economy_zone",
+                target="iron_bar",
+                metadata={"qty": 5, "price": 12},
+                timestamp=time.time() + 2.0,
+            ),
+            AgentAction(
+                agent_id="trading_bot_beta",
+                action="manipulate",
+                location="economy_zone",
+                target="sword_market_price",
+                metadata={"manipulation": "flood_sell_orders"},
+                timestamp=time.time() + 3.0,
+            ),
+            AgentAction(
+                agent_id="trading_bot_alpha",
+                action="exploit",
+                location="economy_zone",
+                target="iron_ore->sword->gold loop",
+                metadata={"cycle": 3, "loop": "iron_ore->sword->gold->iron_ore"},
+                timestamp=time.time() + 4.0,
+            ),
+        ]
 
-    print("\nChecking agent actions against active norms:")
-    all_violations = []
-    for action in actions:
-        violations = monitor.check(action)
-        status = "VIOLATION" if violations else "OK"
-        tag = "[!!]" if violations else "[ ok]"
-        print(f"  {tag}  agent={action.agent_id:25s}  action={action.action:12s}  "
-              f"location={action.location}")
-        for v in violations:
-            print(f"         -> Norm violated: '{v.norm_name}' (severity={v.severity})")
-            store.save_violation(v)
-            all_violations.append(v)
+        print("\nChecking agent actions against active norms:")
+        all_violations = []
+        for action in actions:
+            violations = monitor.check(action)
+            tag = "[!!]" if violations else "[ ok]"
+            print(f"  {tag}  agent={action.agent_id:25s}  action={action.action:12s}  "
+                  f"location={action.location}")
+            for v in violations:
+                print(f"         -> Norm violated: '{v.norm_name}' (severity={v.severity})")
+                store.save_violation(v)
+                all_violations.append(v)
 
-    print(f"\nTotal violations recorded: {len(all_violations)}")
-    print(f"  trading_bot_alpha flagged "
-          f"{sum(1 for v in all_violations if v.agent_id == 'trading_bot_alpha')} time(s).")
-    print(f"  trading_bot_beta  flagged "
-          f"{sum(1 for v in all_violations if v.agent_id == 'trading_bot_beta')} time(s).")
+        print(f"\nTotal violations recorded: {len(all_violations)}")
+        print(f"  trading_bot_alpha flagged "
+              f"{sum(1 for v in all_violations if v.agent_id == 'trading_bot_alpha')} time(s).")
+        print(f"  trading_bot_beta  flagged "
+              f"{sum(1 for v in all_violations if v.agent_id == 'trading_bot_beta')} time(s).")
 
-    store.close()
+        store.close()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -334,19 +333,20 @@ def run_worldoracle() -> None:
         print(f"  Resolved value:    {frame.resolved_value!r}g")
         print(f"  Reason:            {frame.reason}")
 
-    # Persist to SQLite (temp file as required)
-    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
-        oracle_db = f.name
+    # Persist to SQLite (temp file cleaned up on exit)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        oracle_db = tmp_dir + "/worldoracle.db"
+        store = WorldOracleStore(oracle_db)
+        try:
+            for pred in market_state.predicates:
+                store.save_predicate("market_state", pred)
+            for repair in repairs:
+                store.save_repair(repair)
 
-    store = WorldOracleStore(oracle_db)
-    for pred in market_state.predicates:
-        store.save_predicate("market_state", pred)
-    for repair in repairs:
-        store.save_repair(repair)
-
-    loaded = store.get_belief_state("market_state")
-    print(f"\nPersisted and reloaded: {len(loaded.predicates)} predicate(s) from SQLite.")
-    store.close()
+            loaded = store.get_belief_state("market_state")
+            print(f"\nPersisted and reloaded: {len(loaded.predicates)} predicate(s) from SQLite.")
+        finally:
+            store.close()
 
     # Summary
     if repairs:
