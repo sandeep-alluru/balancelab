@@ -1,18 +1,10 @@
-name: balancelab
-displayName: "BalanceLab"
-description: "Economy red-team — Bellman-Ford arbitrage exploit detection for game economies"
-license: MIT
-homepage: https://github.com/sandeep-alluru/balancelab
-repository: https://github.com/sandeep-alluru/balancelab
-keywords:
-  - ai-agents
-  - game-economy
-  - exploit-detection
-  - mcp
 startCommand:
   type: stdio
   configSchema:
     type: object
     properties: {}
   commandFunction: |-
-    (config) => ({ command: "balancelab-mcp" })
+    (config) => ({
+      command: 'uvx',
+      args: ['balancelab-mcp']
+    })
