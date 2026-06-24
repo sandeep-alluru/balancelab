@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sandeep-alluru/balancelab",
+  "title": "BalanceLab",
+  "description": "Adversarial game economy red-team \u2014 arbitrage exploit detection for game economies",
+  "version": "0.1.1",
+  "websiteUrl": "https://github.com/sandeep-alluru/balancelab",
+  "repository": {
+    "url": "https://github.com/sandeep-alluru/balancelab",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "balancelab",
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

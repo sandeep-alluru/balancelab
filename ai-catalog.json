@@ -1,0 +1,40 @@
+{
+  "$schema": "https://agenticresourcediscovery.org/schema/v1/catalog.json",
+  "version": "1.0.0",
+  "name": "BalanceLab",
+  "description": "Adversarial game economy red-team — arbitrage exploit detection for game economies",
+  "publisher": {
+    "name": "Sandeep Alluru",
+    "email": "onepuncchh@gmail.com",
+    "url": "https://github.com/sandeep-alluru"
+  },
+  "tools": [
+    {
+      "id": "io.github.sandeep-alluru/balancelab",
+      "name": "balancelab",
+      "title": "BalanceLab",
+      "description": "Adversarial game economy red-team — arbitrage exploit detection for game economies",
+      "version": "0.1.0",
+      "protocol": "mcp",
+      "transport": "stdio",
+      "install": {
+        "pypi": {
+          "package": "balancelab",
+          "extras": [
+            "mcp"
+          ],
+          "runtimeHint": "uvx"
+        }
+      },
+      "invocation": {
+        "command": "balancelab-mcp"
+      },
+      "repository": {
+        "url": "https://github.com/sandeep-alluru/balancelab",
+        "source": "github"
+      },
+      "homepage": "https://github.com/sandeep-alluru/balancelab",
+      "license": "MIT"
+    }
+  ]
+}
