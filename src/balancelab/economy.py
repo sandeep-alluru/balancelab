@@ -63,7 +63,12 @@ class EconomyGraph:
     rules: list[EconomyRule] = field(default_factory=list)
 
     def add_rule(self, rule: EconomyRule) -> None:
-        """Add a rule to the graph."""
+        """Add a rule to the graph.
+
+        Note: duplicate rules (same source, target, and quantities) produce the
+        same content-addressed ``id`` and will be stored as separate entries.
+        Callers that want idempotent insertion should check ``graph.rules`` first.
+        """
         self.rules.append(rule)
 
     def neighbors(self, item: str) -> list[tuple[str, EconomyRule]]:
