@@ -3,7 +3,7 @@
   "name": "io.github.sandeep-alluru/balancelab",
   "title": "BalanceLab",
   "description": "Adversarial game economy red-team \u2014 arbitrage exploit detection for game economies",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "websiteUrl": "https://github.com/sandeep-alluru/balancelab",
   "repository": {
     "url": "https://github.com/sandeep-alluru/balancelab",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "balancelab",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "transport": {
         "type": "stdio"
       }
