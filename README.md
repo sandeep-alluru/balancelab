@@ -1,6 +1,6 @@
 # balancelab
 
-**Adversarial game economy red-team — detect arbitrage exploits before your players do.**
+**Detect runaway exchange loops in any token economy — game balance, AI spend, or reward-function auditing.**
 
 ![balancelab](assets/hero.png)
 
@@ -18,13 +18,50 @@
 
 ## Why
 
-Game economies break in predictable ways. A crafting loop that converts gold → silver → gems → gold at a net gain of 24x will be found by players within hours of launch — not by QA. Manual balance spreadsheets don't scale. Playtesting can't enumerate all cycles. You need an automated red-team that treats your economy as a directed graph and mathematically proves whether arbitrage is possible.
+Any system with exchange rules — tokens, compute budgets, reward points, or in-game currency — can develop runaway loops that the designers never intended. The loops are mathematically inevitable once the exchange graph contains a negative cycle; the only question is whether you find them first.
 
-balancelab does exactly that: encode your exchange rules, run `balancelab scan`, and get an exploit report showing every profitable cycle with exact gain ratios — before launch.
+**Game economies:** A crafting loop that converts gold → silver → gems → gold at a net gain of 24x will be found by players within hours of launch — not by QA. Manual balance spreadsheets don't scale. Playtesting can't enumerate all cycles.
+
+**AI token budgets:** An analytics pipeline discovers that re-expanding summaries and re-scoring them earns more "quality credit" than it costs in tokens — so it loops. By month-end the pipeline consumed 26x its monthly budget. 78% of teams have no per-workflow token alert; they see the overrun on the billing page, not in a dashboard.
+
+**Reward-function auditing:** An RL agent finds a sequence of actions where each step earns more reward than it costs — a classic reward-hacking loop. balancelab encodes the reward structure as an exchange graph and detects the profitable cycle before the agent finds it.
+
+balancelab treats any set of exchange rules as a directed graph, applies Bellman-Ford on log-weighted edges, and produces an exploit report with exact gain ratios — before launch or before your next billing cycle.
 
 ```
 balancelab scan --format json   # CI-friendly, fails on exploits
 ```
+
+---
+
+## Use Cases
+
+### AI token spend monitoring
+
+Model a multi-workflow AI pipeline as an economy where each model call costs tokens and each quality-score credit refills the budget. balancelab finds the loop before it inflates your bill 26×.
+
+```python
+from balancelab import EconomyGraph, EconomyRule, ExploitFinder, recommend_fixes
+
+graph = EconomyGraph()
+# Analytics pipeline: each quality_score credit = 3500 new budget tokens
+graph.add_rule(EconomyRule("budget_tokens", "quality_score", 200.0, 1.0, rule_id="score"))
+graph.add_rule(EconomyRule("quality_score", "budget_tokens", 1.0, 3500.0, rule_id="redeem"))
+
+report = ExploitFinder().find_exploits(graph)
+# → ExploitReport(exploits=[ExploitPath(path=[budget_tokens → quality_score → budget_tokens], gain_ratio=17.5)])
+
+for fix in recommend_fixes(report):
+    print(fix.fix_type, fix.description)   # rate_cap: cap the redeem edge
+```
+
+See [`examples/ai_token_budget_monitor.py`](examples/ai_token_budget_monitor.py) for a full walkthrough including budget projection and sensitivity analysis.
+
+### Game economy balance
+
+A crafting loop `gold → silver → gems → gold` at 24x gain will be found by players within hours of launch. balancelab encodes your exchange rules and proves whether arbitrage is possible — before it ships.
+
+See [`examples/demo.py`](examples/demo.py) for the classic game economy example.
 
 ---
 
@@ -287,6 +324,8 @@ print(" -> ".join(path))   # e.g. "gems -> gold -> silver"
 | Playtesting | Poor | None | Incomplete | High |
 | Custom scripts | Variable | Manual | Variable | Medium |
 | LLM-only analysis | N/A | Partial | Hallucination risk | High |
+| Cloud billing alerts | Post-facto | Reactive only | Accurate but late | $$ |
+| Per-model rate limits | Coarse-grained | Partial | Misses cross-model loops | Low |
 
 ---
 
@@ -339,3 +378,5 @@ Subscribe to [**The Silence Layer**](https://newsletter.salluru.dev) — weekly 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sandeep-alluru/balancelab&type=Date)](https://star-history.com/#sandeep-alluru/balancelab&Date)
+
+<!-- mcp-name: io.github.sandeep-alluru/balancelab -->
