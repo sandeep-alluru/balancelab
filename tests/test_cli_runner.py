@@ -1,4 +1,5 @@
 """CLI tests using CliRunner."""
+
 from __future__ import annotations
 
 import json

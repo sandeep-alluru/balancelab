@@ -1,4 +1,5 @@
 """Tests for balancelab.simulation."""
+
 from __future__ import annotations
 
 from balancelab.economy import EconomyGraph, EconomyRule
@@ -8,23 +9,33 @@ from balancelab.simulation import SimulationResult, SimulationStep, simulate
 def _make_graph_gold_silver() -> EconomyGraph:
     """Simple graph: gold->silver at 1:2, silver->gold at 1:1."""
     graph = EconomyGraph()
-    graph.add_rule(EconomyRule(source_item="gold", target_item="silver", source_qty=1.0, target_qty=2.0))
-    graph.add_rule(EconomyRule(source_item="silver", target_item="gold", source_qty=1.0, target_qty=1.0))
+    graph.add_rule(
+        EconomyRule(source_item="gold", target_item="silver", source_qty=1.0, target_qty=2.0)
+    )
+    graph.add_rule(
+        EconomyRule(source_item="silver", target_item="gold", source_qty=1.0, target_qty=1.0)
+    )
     return graph
 
 
 def _make_exploit_graph() -> EconomyGraph:
     """Graph with exploit cycle: gold->silver at 1:3, silver->gold at 1:2 (gain 6x)."""
     graph = EconomyGraph()
-    graph.add_rule(EconomyRule(source_item="gold", target_item="silver", source_qty=1.0, target_qty=3.0))
-    graph.add_rule(EconomyRule(source_item="silver", target_item="gold", source_qty=1.0, target_qty=2.0))
+    graph.add_rule(
+        EconomyRule(source_item="gold", target_item="silver", source_qty=1.0, target_qty=3.0)
+    )
+    graph.add_rule(
+        EconomyRule(source_item="silver", target_item="gold", source_qty=1.0, target_qty=2.0)
+    )
     return graph
 
 
 def _make_inflation_graph() -> EconomyGraph:
     """Graph where gold inflates rapidly: gold->gem at 1:1000."""
     graph = EconomyGraph()
-    graph.add_rule(EconomyRule(source_item="gold", target_item="gem", source_qty=1.0, target_qty=1000.0))
+    graph.add_rule(
+        EconomyRule(source_item="gold", target_item="gem", source_qty=1.0, target_qty=1000.0)
+    )
     return graph
 
 
@@ -93,7 +104,9 @@ def test_simulate_rule_violations_tracked() -> None:
     """Rules that cannot fire due to insufficient resources are tracked as violations."""
     graph = EconomyGraph()
     # rule needs 1000 gold but we only have 1
-    graph.add_rule(EconomyRule(source_item="gold", target_item="gem", source_qty=1000.0, target_qty=1.0))
+    graph.add_rule(
+        EconomyRule(source_item="gold", target_item="gem", source_qty=1000.0, target_qty=1.0)
+    )
     initial = {"gold": 1.0}
     result = simulate(graph, initial, n_steps=3, agent_strategy="greedy")
 
@@ -103,7 +116,9 @@ def test_simulate_rule_violations_tracked() -> None:
 def test_simulate_no_inflation_when_stable() -> None:
     """A stable economy (1:1 exchange) does not trigger inflation."""
     graph = EconomyGraph()
-    graph.add_rule(EconomyRule(source_item="gold", target_item="silver", source_qty=1.0, target_qty=1.0))
+    graph.add_rule(
+        EconomyRule(source_item="gold", target_item="silver", source_qty=1.0, target_qty=1.0)
+    )
     initial = {"gold": 100.0, "silver": 0.0}
     result = simulate(graph, initial, n_steps=10, agent_strategy="greedy")
 
@@ -126,7 +141,9 @@ def test_simulate_exploit_insufficient_resources() -> None:
 def test_simulate_balanced_insufficient_resources() -> None:
     """Balanced strategy tracks violations when resources are depleted."""
     graph = EconomyGraph()
-    graph.add_rule(EconomyRule(source_item="gold", target_item="gem", source_qty=50.0, target_qty=1.0))
+    graph.add_rule(
+        EconomyRule(source_item="gold", target_item="gem", source_qty=50.0, target_qty=1.0)
+    )
     # gold starts at 0 so rule can never fire
     initial = {"gold": 0.0, "gem": 0.0}
     result = simulate(graph, initial, n_steps=3, agent_strategy="balanced")

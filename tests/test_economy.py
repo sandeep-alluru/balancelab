@@ -1,4 +1,5 @@
 """Tests for EconomyRule, EconomyGraph content-addressing."""
+
 from __future__ import annotations
 
 from balancelab.economy import EconomyGraph, EconomyRule, ExploitPath, ExploitReport
