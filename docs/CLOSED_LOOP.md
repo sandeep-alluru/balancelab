@@ -1,19 +1,21 @@
 # Closed loop — `balancelab`
 
-**Status:** stub (eagle-eyes Phase 0 / 2026-08-04)  
-**Owner loop:** Game/econ only
+**Status:** reader wired (eagle-eyes / 2026-08-06) — **NO-SHIP + farm signal gates**  
+**Owner loop:** Game/econ / trading pre-flight
 
 ## Load-bearing job
 
-Economy exploit / balance red-team
+Economy exploit / balance red-team + trading quote/signal integrity
 
 ## Who reads the output?
 
-Design review consumes exploit report
+- `gate_economy` / `assert_economy_shippable` — CI ship/no-ship
+- `gate_price_book` / `gate_binary_signal` / `gate_kill_switch` — farm trading failures
 
 ## What outcome changes?
 
-Ship/no-ship economy changes
+Empty graph → FAIL_LOUD. Exploit cycles → FAIL (NO-SHIP). Inverted quotes/signals
+or always-trip kill switch → FAIL.
 
 ## When NOT to use (anti-ornament)
 
@@ -21,9 +23,9 @@ Irrelevant as default MCP on non-game agents
 
 ## Non-Ornament checklist
 
-- [ ] Reader implemented in CI, gate, or eagle-eyes script
-- [ ] Empty/wrong output fails loudly
-- [ ] Not exposed as free MCP in product agents
+- [x] Reader implemented (`closed_loop` gates)
+- [x] Empty/wrong output fails loudly
+- [x] Not free MCP without gate
 - [ ] Linked gap IDs in mem0 when improving
 
 ## Related failures (farm memory)

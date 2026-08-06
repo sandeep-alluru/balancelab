@@ -9,6 +9,16 @@ try:
 except PackageNotFoundError:
     __version__ = "0.0.0"
 
+from balancelab.closed_loop import (
+    ClosedLoopError,
+    GateOutcome,
+    assert_economy_shippable,
+    assert_price_book_ok,
+    gate_binary_signal,
+    gate_economy,
+    gate_kill_switch,
+    gate_price_book,
+)
 from balancelab.economy import (
     EconomyGraph,
     EconomyRule,
@@ -22,16 +32,24 @@ from balancelab.simulation import SimulationResult, SimulationStep, simulate
 
 __all__ = [
     "BalanceFix",
+    "ClosedLoopError",
     "EconomyGraph",
     "EconomyRule",
     "ExploitFinder",
     "ExploitPath",
     "ExploitReport",
+    "GateOutcome",
     "SensitivityResult",
     "SimulationResult",
     "SimulationStep",
     "__version__",
+    "assert_economy_shippable",
+    "assert_price_book_ok",
     "critical_path",
+    "gate_binary_signal",
+    "gate_economy",
+    "gate_kill_switch",
+    "gate_price_book",
     "recommend_fixes",
     "sensitivity_analysis",
     "simulate",
