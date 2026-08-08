@@ -37,6 +37,47 @@ gates in trading pre-flight — not write-only scan logs.
 
 ---
 
+## Case AV-AIVAT — anytime-valid agent evaluation stopping (arXiv 2608.06362)
+
+**Source:** Track B research (prior sessions + `20260808T201228Z` multi-agent /
+agentic eval cluster) —
+[AV-AIVAT: anytime-valid AIVAT evaluation stopping](https://arxiv.org/abs/2608.06362).
+
+**What fails:**
+
+1. Fixed-budget agent comparisons **keep paying** (games/inference cost) after
+   the ranking is already settled.
+2. Naive early stop with ordinary CIs **invalidates** coverage, or stops before
+   agents can be told apart (precision unmet).
+3. Token/game spend has no load-bearing continue/stop gate (budget runaway twin
+   of economy NO-SHIP).
+
+**Product in this repo:**
+
+| Control | API |
+|---------|-----|
+| Observation | `EvalObservation` |
+| Streaming CS snapshot | `summarize_confidence_sequence` → `ConfidenceSequenceState` |
+| Gate | `gate_eval_stopping(decision=continue\|stop)` |
+| Raise form | `assert_eval_stopping_ok` |
+| Defaults | `DEFAULT_TARGET_PRECISION`, `DEFAULT_Z` |
+
+**Rules (load-bearing):**
+
+- Empty observations when required → **FAIL_LOUD**
+- `continue` while sequence **decisive** → **FAIL** (settled waste)
+- `stop` while **not decisive** → **FAIL** (premature stop)
+- `continue` past `max_total_cost` → **FAIL**
+- `stop` when decisive / `continue` when not → **PASS**
+
+**Tests:** `tests/test_av_aivat.py`
+
+**Non-Ornament:** Call `gate_eval_stopping` before each additional eval spend.
+Pair with `gate_economy` / `gate_kill_switch` for ship and trip-rate.
+
+---
+
 ## Related product story
 
-AI token budget 26× loops (README) — same `gate_economy` NO-SHIP path.
+AI token budget 26× loops (README) — same `gate_economy` NO-SHIP path;
+AV-AIVAT gates *when* to stop spending on agent comparisons.

@@ -9,6 +9,15 @@ try:
 except PackageNotFoundError:
     __version__ = "0.0.0"
 
+from balancelab.av_aivat import (
+    DEFAULT_TARGET_PRECISION,
+    DEFAULT_Z,
+    ConfidenceSequenceState,
+    EvalObservation,
+    assert_eval_stopping_ok,
+    gate_eval_stopping,
+    summarize_confidence_sequence,
+)
 from balancelab.closed_loop import (
     ClosedLoopError,
     GateOutcome,
@@ -33,8 +42,12 @@ from balancelab.simulation import SimulationResult, SimulationStep, simulate
 __all__ = [
     "BalanceFix",
     "ClosedLoopError",
+    "ConfidenceSequenceState",
+    "DEFAULT_TARGET_PRECISION",
+    "DEFAULT_Z",
     "EconomyGraph",
     "EconomyRule",
+    "EvalObservation",
     "ExploitFinder",
     "ExploitPath",
     "ExploitReport",
@@ -44,13 +57,16 @@ __all__ = [
     "SimulationStep",
     "__version__",
     "assert_economy_shippable",
+    "assert_eval_stopping_ok",
     "assert_price_book_ok",
     "critical_path",
     "gate_binary_signal",
     "gate_economy",
+    "gate_eval_stopping",
     "gate_kill_switch",
     "gate_price_book",
     "recommend_fixes",
     "sensitivity_analysis",
     "simulate",
+    "summarize_confidence_sequence",
 ]
