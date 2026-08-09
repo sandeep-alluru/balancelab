@@ -96,9 +96,11 @@ def _as_obs(item: EvalObservation | dict[str, Any] | float | int) -> EvalObserva
     if "value" not in item and "score" not in item and "delta" not in item:
         raise ValueError("observation missing value")
     val = item.get("value", item.get("score", item.get("delta")))
+    if val is None:
+        raise ValueError("observation value is None")
     return EvalObservation(
         value=float(val),
-        cost=float(item.get("cost", 1.0)),
+        cost=float(item.get("cost") or 1.0),
         label=str(item.get("label") or item.get("id") or ""),
     )
 
