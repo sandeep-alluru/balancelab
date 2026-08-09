@@ -28,7 +28,6 @@ from balancelab import (
     sensitivity_analysis,
 )
 
-
 # ── Budget constants ───────────────────────────────────────────────────────────
 
 MONTHLY_BUDGET_TOKENS  = 10_000_000   # 10 M tokens per workflow per month

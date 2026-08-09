@@ -129,7 +129,7 @@ def test_simulate_no_inflation_when_stable() -> None:
 def test_simulate_exploit_insufficient_resources() -> None:
     """Exploit strategy records violations when resources are too low to execute cycles."""
     graph = _make_exploit_graph()
-    # Start with zero resources — exploit cycle cannot execute
+    # Start with zero resources - exploit cycle cannot execute
     initial = {"gold": 0.0, "silver": 0.0}
     result = simulate(graph, initial, n_steps=3, agent_strategy="exploit")
 

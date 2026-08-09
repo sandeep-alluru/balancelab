@@ -20,7 +20,7 @@ def print_report(report: ExploitReport, console: Console | None = None) -> None:
     console.print(f"  Exploits found: [bold red]{report.total_found}[/bold red]")
 
     if not report.exploits:
-        console.print("  [green]No exploits detected — economy is balanced.[/green]")
+        console.print("  [green]No exploits detected - economy is balanced.[/green]")
         return
 
     table = Table(title="Exploit Paths")

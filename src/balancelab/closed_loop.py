@@ -10,17 +10,18 @@ What outcome changes?
   Kill-switch that trips on every paper fill → FAIL (cannot evaluate strategy).
 
 Farm Qdrant cases (Latency Arbitrage):
-  * SIGNAL-INVERT — DOWN mid passed as YES price
-  * PRICE-BOOK-ORDER — API worst-to-best; ``.first()`` took worst quote
-  * KILL-SWITCH — loss-limit trips on every paper trade
+  * SIGNAL-INVERT - DOWN mid passed as YES price
+  * PRICE-BOOK-ORDER - API worst-to-best; ``.first()`` took worst quote
+  * KILL-SWITCH - loss-limit trips on every paper trade
 
-Public/product: AI token budget runaway loops (balancelab core) — gate_scan.
+Public/product: AI token budget runaway loops (balancelab core) - gate_scan.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import Any
 
 from balancelab.economy import EconomyGraph, ExploitFinder, ExploitReport
 
@@ -83,7 +84,7 @@ def gate_economy(
     max_allowed_gain: float = 1.0,
     min_rules: int = 1,
 ) -> GateOutcome:
-    """Scan economy for exploits — load-bearing ship/no-ship gate.
+    """Scan economy for exploits - load-bearing ship/no-ship gate.
 
     * Empty rules → FAIL_LOUD
     * Any exploit with gain_ratio > max_allowed_gain → FAIL (no-ship)
@@ -98,7 +99,7 @@ def gate_economy(
     n = len(graph.rules)
     if n < min_rules:
         return _fail_loud(
-            f"empty economy — {n} rules (<{min_rules}); cannot gate a phantom graph",
+            f"empty economy - {n} rules (<{min_rules}); cannot gate a phantom graph",
             rule_count=n,
             exploit_count=0,
         )
@@ -125,7 +126,7 @@ def gate_exploit_report(
         top = max(e.gain_ratio for e in bad)
         return _fail(
             f"NO-SHIP: {len(bad)} exploit cycle(s) max_gain={top:.4f} "
-            f"(threshold={max_allowed_gain}) — balance red-team failed",
+            f"(threshold={max_allowed_gain}) - balance red-team failed",
             rule_count=report.graph_rule_count,
             exploit_count=len(bad),
             max_gain_ratio=top,
@@ -164,7 +165,7 @@ def gate_price_book(
     """
     if not bids or not asks:
         return _fail_loud(
-            "empty price book — no bids or asks",
+            "empty price book - no bids or asks",
             rule_count=0,
         )
 
@@ -180,14 +181,14 @@ def gate_price_book(
         if bids[0] != best_bid:
             return _fail(
                 f"PRICE-BOOK-ORDER: expected best bid at [0], got {bids[0]} "
-                f"(true best={best_bid}) — worst-first API trap "
+                f"(true best={best_bid}) - worst-first API trap "
                 f"(farm: Polymarket .first())",
                 rule_count=len(bids),
             )
         if asks[0] != best_ask:
             return _fail(
                 f"PRICE-BOOK-ORDER: expected best ask at [0], got {asks[0]} "
-                f"(true best={best_ask}) — worst-first API trap",
+                f"(true best={best_ask}) - worst-first API trap",
                 rule_count=len(asks),
             )
     elif order == "worst-first":
@@ -218,7 +219,7 @@ def gate_binary_signal(
 ) -> GateOutcome:
     """Gate binary market signal mapping (SIGNAL-INVERT farm case).
 
-    Farm failure: BTC DOWN used DOWN mid as YES price on the DOWN contract —
+    Farm failure: BTC DOWN used DOWN mid as YES price on the DOWN contract -
     inverted directional signal.
 
     For a DOWN signal on a market where YES = "price goes down":
@@ -236,7 +237,7 @@ def gate_binary_signal(
         yes_price: Price used as YES for the trade decision.
         no_price: Optional NO price for consistency check.
         down_uses_no_token: If True, direction=down must not use a yes_price
-            that is mislabeled — when no_price given and direction=down,
+            that is mislabeled - when no_price given and direction=down,
             the traded token price should be yes_price only if YES means down;
             we require yes_price + no_price ≈ 1 and 0 < prices < 1.
     """
@@ -246,7 +247,7 @@ def gate_binary_signal(
 
     if not (0.0 < yes_price < 1.0):
         return _fail(
-            f"SIGNAL-INVERT: yes_price={yes_price} out of (0,1) — invalid quote",
+            f"SIGNAL-INVERT: yes_price={yes_price} out of (0,1) - invalid quote",
             rule_count=1,
         )
 
@@ -259,22 +260,21 @@ def gate_binary_signal(
         s = yes_price + no_price
         if abs(s - 1.0) > 0.05:
             return _fail(
-                f"SIGNAL-INVERT: yes+no={s:.4f} not ~1.0 — inverted/wrong legs "
+                f"SIGNAL-INVERT: yes+no={s:.4f} not ~1.0 - inverted/wrong legs "
                 f"(farm: DOWN mid as YES)",
                 rule_count=2,
             )
         # Classic invert: using the expensive wrong leg for direction
-        if d == "down" and down_uses_no_token:
+        if d == "down" and down_uses_no_token and yes_price > no_price + 0.02:
             # When YES is the UP token, DOWN should trade NO (price = no_price).
             # If agent passes yes_price while intending down, flag if yes > no
             # (buying the expensive wrong side for a down view).
-            if yes_price > no_price + 0.02:
-                return _fail(
-                    f"SIGNAL-INVERT: direction=down but yes_price={yes_price:.4f} > "
-                    f"no_price={no_price:.4f} — likely using UP/YES as DOWN signal "
-                    f"(farm: BTC DOWN mid as YES)",
-                    rule_count=2,
-                )
+            return _fail(
+                f"SIGNAL-INVERT: direction=down but yes_price={yes_price:.4f} > "
+                f"no_price={no_price:.4f} - likely using UP/YES as DOWN signal "
+                f"(farm: BTC DOWN mid as YES)",
+                rule_count=2,
+            )
 
     return GateOutcome(
         ok=True,
@@ -296,7 +296,7 @@ def gate_kill_switch(
     """Gate kill-switch configuration (KILL-SWITCH farm case).
 
     Farm failure: loss-limit tripped on every paper fill (worst-case spread
-    model) — strategy could not be evaluated.
+    model) - strategy could not be evaluated.
 
     Args:
         trade_pnls: Per-trade PnL series (negative = loss).
@@ -310,7 +310,7 @@ def gate_kill_switch(
         )
 
     if not trade_pnls:
-        return _fail_loud("KILL-SWITCH: empty trade PnL series — nothing to gate")
+        return _fail_loud("KILL-SWITCH: empty trade PnL series - nothing to gate")
 
     # Trip if cumulative or single trade exceeds limit
     trips = 0
@@ -331,7 +331,7 @@ def gate_kill_switch(
         return _fail(
             f"KILL-SWITCH: trip_rate={rate:.2f} > max={limit:.2f} "
             f"({trips}/{len(trade_pnls)} trades) loss_limit={loss_limit} "
-            f"paper_mode={paper_mode} — breaker too tight for evaluation "
+            f"paper_mode={paper_mode} - breaker too tight for evaluation "
             f"(farm: every paper fill tripped)",
             rule_count=len(trade_pnls),
             exploit_count=trips,
@@ -341,8 +341,7 @@ def gate_kill_switch(
         ok=True,
         verdict="PASS",
         reason=(
-            f"kill switch ok trip_rate={rate:.2f} "
-            f"({trips}/{len(trade_pnls)}) limit={loss_limit}"
+            f"kill switch ok trip_rate={rate:.2f} ({trips}/{len(trade_pnls)}) limit={loss_limit}"
         ),
         exit_code=0,
         rule_count=len(trade_pnls),

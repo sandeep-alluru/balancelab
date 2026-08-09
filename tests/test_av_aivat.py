@@ -1,4 +1,4 @@
-"""AV-AIVAT — anytime-valid evaluation stopping (arXiv 2608.06362).
+"""AV-AIVAT - anytime-valid evaluation stopping (arXiv 2608.06362).
 
 Refuse continue after evidence is decisive; refuse stop before decisive.
 """
@@ -121,16 +121,20 @@ def test_dict_and_float_observations() -> None:
 def test_precision_met_is_decisive() -> None:
     # Many identical samples → tiny half-width
     obs = [1.0] * 50
-    state = summarize_confidence_sequence(
-        obs, target_precision=0.5, sample_sd=0.1, min_n=5
-    )
+    state = summarize_confidence_sequence(obs, target_precision=0.5, sample_sd=0.1, min_n=5)
     assert state.precision_met is True
     assert state.decisive is True
 
 
 def test_assert_raises() -> None:
     with pytest.raises(ClosedLoopError):
-        assert_eval_stopping_ok([0.0, 0.0], decision="stop", sample_sd=10.0, min_n=100, target_precision=0.001)
+        assert_eval_stopping_ok(
+            [0.0, 0.0],
+            decision="stop",
+            sample_sd=10.0,
+            min_n=100,
+            target_precision=0.001,
+        )
 
 
 def test_arxiv_av_aivat_fixture() -> None:

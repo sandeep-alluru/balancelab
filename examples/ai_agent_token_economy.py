@@ -14,10 +14,8 @@ Run:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
 
-from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder, ExploitReport
-
+from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -189,17 +187,17 @@ def main() -> None:
         overshoot_pct = ((tph / INTENDED_HOURLY_TOKEN_CAP) - 1.0) * 100.0
         severity = "CRITICAL" if exploit.gain_ratio >= CRITICAL_MULTIPLIER else "HIGH"
 
-        print(f"  EXPLOIT: synthetic_task_loop")
+        print("  EXPLOIT: synthetic_task_loop")
         print(f"  Path:    {path_str}")
         print(f"  Gain:    {exploit.gain_ratio:.2f}x per cycle")
         print()
-        print(f"  How it works:")
-        print(f"    1. Agent completes a legitimate large_task → earns 200 tokens")
-        print(f"    2. Calls gpt-4o-mini 20 times (cost: 20 tokens total)")
-        print(f"    3. Each call generates 1 synthetic_task artifact")
-        print(f"    4. Automated validator accepts artifact → awards 10 tokens each")
-        print(f"    5. Net gain: 200 - 20 + 200 = +380 tokens per cycle")
-        print(f"    6. Agent repeats indefinitely → infinite token inflation")
+        print("  How it works:")
+        print("    1. Agent completes a legitimate large_task → earns 200 tokens")
+        print("    2. Calls gpt-4o-mini 20 times (cost: 20 tokens total)")
+        print("    3. Each call generates 1 synthetic_task artifact")
+        print("    4. Automated validator accepts artifact → awards 10 tokens each")
+        print("    5. Net gain: 200 - 20 + 200 = +380 tokens per cycle")
+        print("    6. Agent repeats indefinitely → infinite token inflation")
         print()
         print(f"  Token earn rate:   {tph:,.0f} tokens/hour  (intended: {INTENDED_HOURLY_TOKEN_CAP})")
         print(f"  Rate overshoot:    {overshoot_pct:.0f}% above cap")

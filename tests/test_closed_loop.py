@@ -1,4 +1,4 @@
-"""Closed-loop gates — NO-SHIP exploits + farm latency-arb signal traps."""
+"""Closed-loop gates - NO-SHIP exploits + farm latency-arb signal traps."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def test_exploit_cycle_no_ship() -> None:
     g = EconomyGraph()
     g.add_rule(EconomyRule("gold", "silver", 1.0, 10.0, rule_id="g2s"))
     g.add_rule(EconomyRule("silver", "gold", 1.0, 1.0, rule_id="s2g"))
-    # rate 10 * 1 = 10x loop if designed as exploit — need proper cycle
+    # rate 10 * 1 = 10x loop if designed as exploit - need proper cycle
     g2 = EconomyGraph()
     g2.add_rule(EconomyRule("a", "b", 1.0, 2.0))
     g2.add_rule(EconomyRule("b", "a", 1.0, 1.0))

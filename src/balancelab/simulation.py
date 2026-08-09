@@ -65,7 +65,7 @@ def simulate(
                     rule_violations.append(rule.id)
 
         elif agent_strategy == "balanced":
-            # At most 1 rule per source item per step — pick the best exchange rate
+            # At most 1 rule per source item per step - pick the best exchange rate
             best_rules: dict[str, EconomyRule] = {}
             for rule in graph.rules:
                 src = rule.source_item
@@ -119,7 +119,7 @@ def simulate(
                         activity_key = f"{rule.source_item}->{rule.target_item}"
                         activity_counts[activity_key] = activity_counts.get(activity_key, 0) + 1
 
-            # Skip greedy pass — exploit cycles were already applied
+            # Skip greedy pass - exploit cycles were already applied
             # (applying greedy rules again would double-count rules used in exploit cycles)
 
         # Check for inflation: any resource > 10x its initial level

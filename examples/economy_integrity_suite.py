@@ -27,10 +27,6 @@ from __future__ import annotations
 import tempfile
 import time
 
-# ── balancelab ────────────────────────────────────────────────────────────────
-from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder
-from balancelab.fixes import recommend_fixes
-
 # ── normsync ──────────────────────────────────────────────────────────────────
 from normsync.monitor import NormMonitor
 from normsync.norm import AgentAction, WorldNorm
@@ -44,6 +40,10 @@ from worldoracle.predicate import (
     WorldPredicate,
 )
 from worldoracle.store import WorldOracleStore
+
+# ── balancelab ────────────────────────────────────────────────────────────────
+from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder
+from balancelab.fixes import recommend_fixes
 
 # ─────────────────────────────────────────────────────────────────────────────
 SECTION = "=" * 60

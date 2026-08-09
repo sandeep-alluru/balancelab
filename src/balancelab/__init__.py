@@ -1,4 +1,4 @@
-"""balancelab — adversarial game economy red-team library."""
+"""balancelab - adversarial game economy red-team library."""
 
 from __future__ import annotations
 
@@ -40,11 +40,11 @@ from balancelab.sensitivity import SensitivityResult, critical_path, sensitivity
 from balancelab.simulation import SimulationResult, SimulationStep, simulate
 
 __all__ = [
+    "DEFAULT_TARGET_PRECISION",
+    "DEFAULT_Z",
     "BalanceFix",
     "ClosedLoopError",
     "ConfidenceSequenceState",
-    "DEFAULT_TARGET_PRECISION",
-    "DEFAULT_Z",
     "EconomyGraph",
     "EconomyRule",
     "EvalObservation",

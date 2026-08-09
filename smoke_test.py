@@ -13,11 +13,9 @@ Exit 0 = all passed. Exit 1 = at least one failure.
 
 from __future__ import annotations
 
-import importlib
 import json
 import subprocess
 import sys
-import tempfile
 import traceback
 from pathlib import Path
 
@@ -53,7 +51,7 @@ def section(title: str) -> None:
     print(f"\n{BOLD}{title}{RESET}")
 
 
-def run(name: str, fn):  # noqa: ANN001
+def run(name: str, fn):
     try:
         fn()
         ok(name)
@@ -74,7 +72,7 @@ def _test_import_version() -> None:
 
 
 def _test_import_public_api() -> None:
-    from balancelab import EconomyRule, EconomyGraph, ExploitFinder, ExploitPath, ExploitReport
+    from balancelab import EconomyGraph, ExploitFinder
     assert callable(ExploitFinder)
     assert callable(EconomyGraph)
 
@@ -206,7 +204,9 @@ def _test_to_markdown() -> None:
 
 def _test_print_report() -> None:
     import io
+
     from rich.console import Console
+
     from balancelab.economy import ExploitReport
     from balancelab.report import print_report
     buf = io.StringIO()
@@ -249,6 +249,7 @@ def _test_api_import() -> None:
 
 def _test_api_health() -> None:
     from fastapi.testclient import TestClient
+
     from balancelab.api import app
     client = TestClient(app)
     r = client.get("/health")
@@ -325,7 +326,7 @@ def _test_openapi_yaml_parseable() -> None:
 
 def _test_cursor_rules() -> None:
     mdc_files = list((REPO_ROOT / ".cursor/rules").glob("*.mdc"))
-    assert len(mdc_files) >= 1, f"Expected >=1 .mdc file in .cursor/rules/, found none"
+    assert len(mdc_files) >= 1, "Expected >=1 .mdc file in .cursor/rules/, found none"
 
 
 run("AGENTS.md exists and non-empty", lambda: _check_file_nonempty("AGENTS.md"))

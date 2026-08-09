@@ -4,7 +4,7 @@ Public case: Fixed-budget agent comparisons either **keep paying after the
 result is settled** or **stop before agents can be told apart**. Naive optional
 stopping with ordinary CIs invalidates coverage. AV-AIVAT pairs variance-reduced
 values with continuously monitored confidence sequences so evaluation may stop
-as soon as evidence suffices — with the guarantee intact.
+as soon as evidence suffices - with the guarantee intact.
 
 Product role in balancelab (economy twin of kill-switch / budget NO-SHIP):
   Gate the **decision to continue or stop** an agent evaluation run given
@@ -19,8 +19,9 @@ Non-Ornament:
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Literal, Sequence
+from typing import Any, Literal
 
 from balancelab.closed_loop import ClosedLoopError, GateOutcome
 
@@ -114,7 +115,7 @@ def summarize_confidence_sequence(
 
     Uses ``half_width = z * s / sqrt(n)`` with sample SD (or provided
     ``sample_sd``). This is a **gate-facing** plug-in CS, not a claim of
-    exact AV-AIVAT AIVAT corrections — those reduce variance upstream; the
+    exact AV-AIVAT AIVAT corrections - those reduce variance upstream; the
     gate consumes the resulting stream of values.
     """
     if target_precision < 0:
@@ -189,7 +190,7 @@ def gate_eval_stopping(
 
     * No observations when required → **FAIL_LOUD**
     * ``decision=continue`` while sequence is **decisive** → **FAIL**
-      (keep paying after result settled — paper failure mode)
+      (keep paying after result settled - paper failure mode)
     * ``decision=stop`` while sequence is **not decisive** → **FAIL**
       (stop before agents can be told apart / precision unmet)
     * ``max_total_cost`` exceeded and still continuing → **FAIL**
@@ -211,10 +212,7 @@ def gate_eval_stopping(
         return GateOutcome(
             ok=False,
             verdict="FAIL_LOUD",
-            reason=(
-                f"AV-AIVAT: unknown decision={decision!r} "
-                "(use continue|stop)"
-            ),
+            reason=(f"AV-AIVAT: unknown decision={decision!r} (use continue|stop)"),
             exit_code=2,
             human_required=True,
         )
@@ -225,7 +223,7 @@ def gate_eval_stopping(
                 ok=False,
                 verdict="FAIL_LOUD",
                 reason=(
-                    "AV-AIVAT: no evaluation observations — cannot decide "
+                    "AV-AIVAT: no evaluation observations - cannot decide "
                     "continue/stop without a streaming score inventory "
                     "(arXiv 2608.06362)"
                 ),
@@ -271,7 +269,7 @@ def gate_eval_stopping(
             verdict="FAIL",
             reason=(
                 f"AV-AIVAT: total_cost={state.total_cost:.3f} exceeds "
-                f"max_total_cost={max_total_cost:.3f} while decision=continue — "
+                f"max_total_cost={max_total_cost:.3f} while decision=continue - "
                 "budget exhausted (token/game spend runaway)"
             ),
             exit_code=1,
@@ -289,7 +287,7 @@ def gate_eval_stopping(
                 f"(n={state.n} mean={state.mean:.4f} "
                 f"CI=[{state.lower:.4f},{state.upper:.4f}] "
                 f"sign_settled={state.sign_settled} "
-                f"precision_met={state.precision_met}) — refuse keep-paying "
+                f"precision_met={state.precision_met}) - refuse keep-paying "
                 "after result settled (arXiv 2608.06362 fixed-budget waste)"
             ),
             exit_code=1,
@@ -306,7 +304,7 @@ def gate_eval_stopping(
                 f"AV-AIVAT: decision=stop but sequence not decisive "
                 f"(n={state.n} mean={state.mean:.4f} "
                 f"half_width={state.half_width:.4f} "
-                f"target={target_precision}) — refuse premature stop before "
+                f"target={target_precision}) - refuse premature stop before "
                 "agents can be told apart / precision unmet"
             ),
             exit_code=1,

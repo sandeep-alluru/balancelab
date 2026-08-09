@@ -19,7 +19,6 @@ import time
 
 from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder, ExploitReport
 
-
 # ── Protocol constants ─────────────────────────────────────────────────────────
 
 # Intended protocol yields / exchange parameters
@@ -206,11 +205,11 @@ def print_audit_report(report: ExploitReport) -> None:
     if flash_exploits:
         e = flash_exploits[0]
         path_str = " → ".join(e.path)
-        print(f"  [CRITICAL] Flash loan attack:")
+        print("  [CRITICAL] Flash loan attack:")
         print(f"  Path:     {path_str}")
         print(f"  Gain:     {e.gain_ratio:.2f}x per loan cycle")
         print(f"  Exposure: ${FLASH_LOAN_EXPOSURE_USD:,.0f} (at 1000-ETH loan size)")
-        print(f"  Impact:   Drains undercollateralised positions in a single block.")
+        print("  Impact:   Drains undercollateralised positions in a single block.")
         print()
 
     # ── EXPLOIT B details ──────────────────────────────────────────────────
@@ -220,7 +219,7 @@ def print_audit_report(report: ExploitReport) -> None:
         e = gov_exploits[0]
         path_str = " → ".join(e.path)
         effective_apy = INTENDED_APY_PCT * e.gain_ratio
-        print(f"  [HIGH] GOV token compounding loop:")
+        print("  [HIGH] GOV token compounding loop:")
         print(f"  Path:     {path_str}")
         print(f"  Gain:     {e.gain_ratio:.2f}x  →  effective APY: {effective_apy:.0f}%  (intended: {INTENDED_APY_PCT:.0f}%)")
         print(f"  Exposure: ${GOV_YIELD_OVERSHOOT_USD:,.0f} extractable in 30 days")
@@ -233,11 +232,11 @@ def print_audit_report(report: ExploitReport) -> None:
     if lp_exploits:
         e = lp_exploits[0]
         path_str = " → ".join(e.path)
-        print(f"  [MEDIUM] LP token price arbitrage:")
+        print("  [MEDIUM] LP token price arbitrage:")
         print(f"  Path:     {path_str}")
         print(f"  Gain:     {e.gain_ratio:.2f}x per cycle  ({LP_ARB_PCT_PER_CYCLE*100:.0f}% per cycle)")
-        print(f"  Exposure: Bounded by LP_GOV_ETH pool size (currently ~$180k TVL)")
-        print(f"  Impact:   Continuous extraction until pool is drained.  Bounded but reliable.")
+        print("  Exposure: Bounded by LP_GOV_ETH pool size (currently ~$180k TVL)")
+        print("  Impact:   Continuous extraction until pool is drained.  Bounded but reliable.")
         print()
 
     hr()
@@ -273,7 +272,7 @@ def print_audit_report(report: ExploitReport) -> None:
         )
     if lp_exploits:
         summary_lines.append(
-            f"LP arb: MEDIUM (bounded by pool size)"
+            "LP arb: MEDIUM (bounded by pool size)"
         )
 
     print("  FINAL VERDICT: DO NOT DEPLOY — critical exploit present.")

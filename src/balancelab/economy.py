@@ -1,4 +1,4 @@
-"""Core data model for balancelab — economy rules, graphs, exploits."""
+"""Core data model for balancelab - economy rules, graphs, exploits."""
 
 from __future__ import annotations
 

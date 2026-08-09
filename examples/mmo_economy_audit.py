@@ -16,7 +16,6 @@ import time
 
 from balancelab.economy import EconomyGraph, EconomyRule, ExploitFinder, ExploitReport
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def severity_tag(gain: float) -> str:

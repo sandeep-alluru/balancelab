@@ -38,13 +38,12 @@ from balancelab import (
     ExploitFinder,
     ExploitPath,
     ExploitReport,
-    SimulationResult,
     SensitivityResult,
+    SimulationResult,
     recommend_fixes,
     sensitivity_analysis,
     simulate,
 )
-
 
 # ── Section helper ────────────────────────────────────────────────────────────
 
@@ -181,7 +180,7 @@ def run_phase_1_stable() -> None:
     print(f"    Velocity change:         {velocity:>+9.1f}%  (normal variance)")
     print(f"    Inflation detected:      {result.inflation_detected}")
     print()
-    print(f"    Economy is stable. No structural exploit firing in normal play.")
+    print("    Economy is stable. No structural exploit firing in normal play.")
 
 
 def run_phase_2_scan() -> ExploitReport:
@@ -203,16 +202,16 @@ def run_phase_2_scan() -> ExploitReport:
     if report.exploits:
         worst: ExploitPath = max(report.exploits, key=lambda e: e.gain_ratio)
         print()
-        print(f"    Worst exploit:")
+        print("    Worst exploit:")
         print(f"      Gain ratio:          {worst.gain_ratio:.2f}x  (1.0x = break-even)")
         print(f"      Cycle:               {' -> '.join(worst.path)}")
         print(f"      Rules used:          {len(worst.rules_used)}")
         print()
-        print(f"    ALERT: profitable cycle detected at hour 6.")
-        print(f"    Player forums typically notice inflation at hour 18-24.")
-        print(f"    Early detection window: ~12 hours before visible player impact.")
+        print("    ALERT: profitable cycle detected at hour 6.")
+        print("    Player forums typically notice inflation at hour 18-24.")
+        print("    Early detection window: ~12 hours before visible player impact.")
     else:
-        print(f"    No exploits found. Economy is structurally balanced.")
+        print("    No exploits found. Economy is structurally balanced.")
 
     return report
 
@@ -241,7 +240,7 @@ def run_phase_3_projection() -> None:
     # Find the step when gold first exceeds 10x baseline (player-visible inflation)
     onset_step: int | None = None
     threshold = 10.0 * baseline
-    print(f"    Bot gold injection rate: 1,800 gold/hour (60 gold/drop × 30 drops/hour)")
+    print("    Bot gold injection rate: 1,800 gold/hour (60 gold/drop × 30 drops/hour)")
     print(f"    Gold supply baseline:    {baseline:>10,.0f}")
     print()
     print(f"    {'Hour':>6s}  {'Gold Supply':>14s}  {'vs Baseline':>12s}")
@@ -260,7 +259,7 @@ def run_phase_3_projection() -> None:
     if onset_step is not None:
         print(f"    Inflation onset:         hour {onset_step}  (players notice ~hour 18-24)")
     else:
-        print(f"    10x threshold not reached in 50 hours.")
+        print("    10x threshold not reached in 50 hours.")
     print(f"    Inflation detected:      {'YES — ' + str(result.inflation_resource) if result.inflation_detected else 'no'}")
 
 
@@ -288,8 +287,8 @@ def run_phase_4_fix(report: ExploitReport) -> None:
     # OR raise materials cost from 40g → 87g (above sell price 85g)
     # We demonstrate the rate_cap approach: cap auction-sell to 38 gold
     print()
-    print(f"    Applying fix: reduce auction sell price 85 gold → 38 gold")
-    print(f"    (below materials cost of 40 gold — crafting loop becomes net-negative)")
+    print("    Applying fix: reduce auction sell price 85 gold → 38 gold")
+    print("    (below materials cost of 40 gold — crafting loop becomes net-negative)")
 
     graph_fixed = build_exploit_detection_graph(npc_vendor_gold=60.0)
     # Replace the auction-sell rule with a lower sell price
@@ -305,7 +304,7 @@ def run_phase_4_fix(report: ExploitReport) -> None:
 
     print(f"    Post-fix exploits found: {report_fixed.total_found}")
     if report_fixed.total_found == 0:
-        print(f"    Economy is balanced — no profitable cycle remains.")
+        print("    Economy is balanced — no profitable cycle remains.")
     else:
         worst_fixed = max(report_fixed.exploits, key=lambda e: e.gain_ratio)
         print(f"    Residual gain ratio:     {worst_fixed.gain_ratio:.4f}x — tune further.")
@@ -333,7 +332,7 @@ def run_phase_5_sensitivity(report: ExploitReport) -> None:
     print(f"    Gate nodes (gate all access):    {gate_nodes or 'none'}")
     print(f"    Rate-limit nodes (throttle):     {rate_limit_nodes or 'none'}")
     print()
-    print(f"    Monitor these nodes on every config change to catch future exploits.")
+    print("    Monitor these nodes on every config change to catch future exploits.")
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────

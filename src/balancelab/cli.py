@@ -25,7 +25,7 @@ def _get_store(db: str) -> EconomyStore:
 @click.group()
 @click.version_option(version=__version__, prog_name="balancelab")
 def main() -> None:
-    """balancelab — adversarial game economy red-team tool."""
+    """balancelab - adversarial game economy red-team tool."""
 
 
 @main.command("add")
@@ -122,7 +122,7 @@ def status(db: str) -> None:
     console.print(f"  Reports stored: {len(reports)}")
     if reports:
         r = reports[0]
-        console.print(f"  Last scan: {r.id} — {r.total_found} exploit(s) found")
+        console.print(f"  Last scan: {r.id} - {r.total_found} exploit(s) found")
 
 
 @main.command("simulate")
@@ -161,7 +161,7 @@ def simulate_cmd(graph_file: str, steps: int, strategy: str, fmt: str) -> None:
         }
         click.echo(_json.dumps(output, indent=2))
     else:
-        console.print(f"[bold]Simulation complete[/bold] — {strategy} strategy, {steps} steps")
+        console.print(f"[bold]Simulation complete[/bold] - {strategy} strategy, {steps} steps")
         console.print(result.summary)
         console.print("\n[bold]Final resource levels:[/bold]")
         for item, level in sorted(result.final_levels.items()):
@@ -200,7 +200,7 @@ def fixes_cmd(db: str, report_id: str) -> None:
     fixes = recommend_fixes(report)
 
     if not fixes:
-        console.print("[green]No fixes needed — no exploits found in this report.[/green]")
+        console.print("[green]No fixes needed - no exploits found in this report.[/green]")
         return
 
     n_fixes = len(fixes)
