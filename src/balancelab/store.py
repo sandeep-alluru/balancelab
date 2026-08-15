@@ -6,7 +6,7 @@ import json
 import sqlite3
 
 from balancelab.economy import EconomyRule, ExploitPath, ExploitReport
-from balancelab.paths import ensure_parent_dir, safe_db_path
+from balancelab.paths import connect_sqlite, ensure_parent_dir, resolve_store_path
 
 
 class EconomyStore:
@@ -14,13 +14,16 @@ class EconomyStore:
 
     def __init__(self, db_path: str = ".balancelab/economy.db") -> None:
         """Initialize the store with a SQLite database path."""
-        confined = safe_db_path(db_path, env_var="BALANCELAB_DATA_DIR", default_name="economy.db")
-        ensure_parent_dir(confined)
-        self.db_path = confined
+        full, base = resolve_store_path(
+            db_path, env_var="BALANCELAB_DATA_DIR", default_name="economy.db"
+        )
+        ensure_parent_dir(full, base)
+        self.db_path = full
+        self._base = base
         self._init_db()
 
     def _conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
+        conn = connect_sqlite(self.db_path, self._base)
         conn.row_factory = sqlite3.Row
         return conn
 
