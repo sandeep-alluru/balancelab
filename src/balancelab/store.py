@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from pathlib import Path
 
 from balancelab.economy import EconomyRule, ExploitPath, ExploitReport
+from balancelab.paths import ensure_parent_dir, safe_db_path
 
 
 class EconomyStore:
@@ -14,8 +14,9 @@ class EconomyStore:
 
     def __init__(self, db_path: str = ".balancelab/economy.db") -> None:
         """Initialize the store with a SQLite database path."""
-        self.db_path = db_path
-        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        confined = safe_db_path(db_path, env_var="BALANCELAB_DATA_DIR", default_name="economy.db")
+        ensure_parent_dir(confined)
+        self.db_path = confined
         self._init_db()
 
     def _conn(self) -> sqlite3.Connection:
