@@ -79,7 +79,9 @@ def run_server() -> None:
         return [
             _mcp_types.Tool(
                 name="add_rule",
-                description="Add an exchange rule to the game economy",
+                description=(
+                    "Add an economy balance rule that balancelab will use when scanning for exploits or arbitrage. Use when defining what 'broken' looks like (e.g. infinite money loops). Call scan_economy afterwards to evaluate. Do not use to list past findings — use list_reports."
+                ),
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -95,7 +97,9 @@ def run_server() -> None:
             ),
             _mcp_types.Tool(
                 name="scan_economy",
-                description="Scan the economy for arbitrage exploits",
+                description=(
+                    "Scan the configured game/economy model against registered rules and report exploits or imbalances. Use after add_rule when rules are ready. Returns findings; does not auto-patch the economy."
+                ),
                 inputSchema={
                     "type": "object",
                     "properties": {"db": {"type": "string"}},
@@ -103,7 +107,9 @@ def run_server() -> None:
             ),
             _mcp_types.Tool(
                 name="list_reports",
-                description="List all exploit scan reports",
+                description=(
+                    "List prior economy scan reports. Use to review historical findings without re-running scan_economy. Read-only."
+                ),
                 inputSchema={
                     "type": "object",
                     "properties": {"db": {"type": "string"}},
